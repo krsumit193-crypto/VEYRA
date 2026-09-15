@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Veyra</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+    <nav>
+
+        <h1>Veyra</h1>
+
+        <a href="#">Home</a>
+        <a href="#">About</a>
+
+    </nav>
+
+
+    <main>
+
+        <!-- Hero Section -->
+
+        <section class="hero">
+
+            <h2>Meet someone who remembers</h2>
+
+            <p>
+                Stories, conversations, and companions that feel a little more real.
+            </p>
+
+            <button id="exploreBtn">
+                Explore Stories
+            </button>
+
+        </section>
+
+
+        <!-- Stories Section -->
+
+        <section id="stories">
+
+            <h2>Stories for you</h2>
+
+            <p>
+                Step into a story and make it your own.
+            </p>
+
+
+            <div>
+
+                <!-- Story 1 -->
+
+                <article class="story-card" id="story1">
+
+                    <img
+                        src="https://placehold.co/400x250"
+                        alt="The Girl in Seat 27"
+                    >
+
+                    <div class="story-info">
+
+                        <h3>The Girl in Seat 27</h3>
+
+                        <p class="genre">
+                            Roleplay · Mystery · Romance
+                        </p>
+
+                        <p class="hook">
+                            She sits beside you every day, but you've never seen her face.
+                            Maybe today you'll finally find out who she really is.
+                        </p>
+
+                    </div>
+
+                </article>
+
+
+                <!-- Story 2 -->
+
+                <article class="story-card" id="story2">
+
+                    <img
+                        src="https://placehold.co/400x250"
+                        alt="3:17 AM"
+                    >
+
+                    <div class="story-info">
+
+                        <h3>3:17 AM</h3>
+
+                        <p class="genre">
+                            Roleplay · Late Night · Friendship
+                        </p>
+
+                        <p class="hook">
+                            Every night at exactly 3:17, she sends you a message.
+                        </p>
+
+                    </div>
+
+                </article>
+
+
+                <!-- Story 3 -->
+
+                <article class="story-card" id="story3">
+
+                    <img
+                        src="https://placehold.co/400x250"
+                        alt="My Fake Girlfriend"
+                    >
+
+                    <div class="story-info">
+
+                        <h3>My Fake Girlfriend</h3>
+
+                        <p class="genre">
+                            Roleplay · Romance · Comedy
+                        </p>
+
+                        <p class="hook">
+                            It was supposed to be fake. Then she started taking it seriously.
+                        </p>
+
+                    </div>
+
+                </article>
+
+
+                <!-- Story 4 -->
+
+                <article class="story-card" id="story4">
+
+                    <img
+                        src="https://placehold.co/400x250"
+                        alt="The Rival Next Door"
+                    >
+
+                    <div class="story-info">
+
+                        <h3>The Rival Next Door</h3>
+
+                        <p class="genre">
+                            Roleplay · Drama · Enemies
+                        </p>
+
+                        <p class="hook">
+                            You can't stand her. Unfortunately, she's your new neighbour.
+                        </p>
+
+                    </div>
+
+                </article>
+
+
+                <!-- Story 5 -->
+
+                <article class="story-card" id="story5">
+
+                    <img
+                        src="https://placehold.co/400x250"
+                        alt="She Remembers Everything"
+                    >
+
+                    <div class="story-info">
+
+                        <h3>She Remembers Everything</h3>
+
+                        <p class="genre">
+                            Story · Emotional · Mystery
+                        </p>
+
+                        <p class="hook">
+                            You forgot what happened. She didn't.
+                        </p>
+
+                    </div>
+
+                </article>
+
+
+                <!-- Story 6 -->
+
+                <article class="story-card" id="story6">
+
+                    <img
+                        src="https://placehold.co/400x250"
+                        alt="One Summer, One Secret"
+                    >
+
+                    <div class="story-info">
+
+                        <h3>One Summer, One Secret</h3>
+
+                        <p class="genre">
+                            Story · Romance · Drama
+                        </p>
+
+                        <p class="hook">
+                            You promised never to tell anyone what happened that summer.
+                        </p>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!-- Custom Story Section -->
+
+        <section class="custom-story">
+
+            <h2>Create your own story</h2>
+
+            <p>
+                Tell Veyra the world, the characters, and the situation.
+                Your AI companion will bring the story to life.
+            </p>
+
+            <button id="createStoryBtn">
+                Create a Story
+            </button>
+
+        </section>
+
+
+        <!-- Chat Screen -->
+
+        <section class="chat-screen" id="chatScreen">
+
+            <div class="chat-header">
+
+                <button id="backBtn">
+                    ←
+                </button>
+
+
+                <div>
+
+                    <h2>Her</h2>
+
+                    <p>
+                        Online
+                    </p>
+
+                </div>
+
+
+                <select id="languageSelect">
+
+                    <option value="en">
+                        English
+                    </option>
+
+                    <option value="hi">
+                        Hindi
+                    </option>
+
+                    <option value="hin">
+                        Hinglish
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="chat-messages">
+
+                <div class="message ai-message">
+                    finally tumne mujhe notice kia.
+                </div>
+
+            </div>
+
+
+            <div class="chat-input">
+
+                <input
+                    type="text"
+                    id="messageInput"
+                    placeholder="Type a message..."
+                >
+
+                <button id="sendBtn">
+                    Send
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
