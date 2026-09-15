@@ -15,6 +15,8 @@
 
 <body>
 
+    <!-- ================= NAVBAR ================= -->
+
     <nav>
 
         <h1>Veyra</h1>
@@ -27,7 +29,8 @@
 
     <main>
 
-        <!-- Hero Section -->
+
+        <!-- ================= HERO ================= -->
 
         <section class="hero">
 
@@ -44,7 +47,8 @@
         </section>
 
 
-        <!-- Stories Section -->
+
+        <!-- ================= STORIES ================= -->
 
         <section id="stories">
 
@@ -57,12 +61,13 @@
 
             <div>
 
-                <!-- Story 1 -->
+
+                <!-- STORY 1 -->
 
                 <article class="story-card" id="story1">
 
                     <img
-                        src="https://placehold.co/400x250"
+                        src="images/seat27.png"
                         alt="The Girl in Seat 27"
                     >
 
@@ -84,12 +89,13 @@
                 </article>
 
 
-                <!-- Story 2 -->
+
+                <!-- STORY 2 -->
 
                 <article class="story-card" id="story2">
 
                     <img
-                        src="https://placehold.co/400x250"
+                        src="images/317am.png"
                         alt="3:17 AM"
                     >
 
@@ -110,12 +116,13 @@
                 </article>
 
 
-                <!-- Story 3 -->
+
+                <!-- STORY 3 -->
 
                 <article class="story-card" id="story3">
 
                     <img
-                        src="https://placehold.co/400x250"
+                        src="images/fakegirlfriend.png"
                         alt="My Fake Girlfriend"
                     >
 
@@ -136,12 +143,13 @@
                 </article>
 
 
-                <!-- Story 4 -->
+
+                <!-- STORY 4 -->
 
                 <article class="story-card" id="story4">
 
                     <img
-                        src="https://placehold.co/400x250"
+                        src="images/nextdoor.png"
                         alt="The Rival Next Door"
                     >
 
@@ -162,12 +170,13 @@
                 </article>
 
 
-                <!-- Story 5 -->
+
+                <!-- STORY 5 -->
 
                 <article class="story-card" id="story5">
 
                     <img
-                        src="https://placehold.co/400x250"
+                        src="images/remembers.png"
                         alt="She Remembers Everything"
                     >
 
@@ -188,12 +197,13 @@
                 </article>
 
 
-                <!-- Story 6 -->
+
+                <!-- STORY 6 -->
 
                 <article class="story-card" id="story6">
 
                     <img
-                        src="https://placehold.co/400x250"
+                        src="images/summersecret.png"
                         alt="One Summer, One Secret"
                     >
 
@@ -213,12 +223,14 @@
 
                 </article>
 
+
             </div>
 
         </section>
 
 
-        <!-- Custom Story Section -->
+
+        <!-- ================= CREATE STORY ================= -->
 
         <section class="custom-story">
 
@@ -236,57 +248,151 @@
         </section>
 
 
-        <!-- Chat Screen -->
+
+        <!-- ================= CHAT SCREEN ================= -->
 
         <section class="chat-screen" id="chatScreen">
 
+
+            <!-- CHAT HEADER -->
+
             <div class="chat-header">
 
-                <button id="backBtn">
+
+                <!-- BACK -->
+
+                <button
+                    id="backBtn"
+                    class="back-btn"
+                >
                     ←
                 </button>
 
 
-                <div>
 
-                    <h2>Her</h2>
+                <!-- CHARACTER -->
 
-                    <p>
-                        Online
-                    </p>
+                <div class="chat-user">
+
+
+                    <!-- Avatar will be added dynamically later -->
+
+                    <div class="chat-avatar"></div>
+
+
+                    <div>
+
+                        <h2>Her</h2>
+
+                        <p>
+                            Online
+                        </p>
+
+                    </div>
 
                 </div>
 
 
-                <select id="languageSelect">
 
-                    <option value="en">
-                        English
-                    </option>
+                <!-- CHAT ACTIONS -->
 
-                    <option value="hi">
-                        Hindi
-                    </option>
+                <div class="chat-actions">
 
-                    <option value="hin">
-                        Hinglish
-                    </option>
 
-                </select>
+                    <!-- LANGUAGE -->
+
+                    <select id="languageSelect">
+
+                        <option value="en">
+                            English
+                        </option>
+
+                        <option value="hi">
+                            Hindi
+                        </option>
+
+                        <option value="hin">
+                            Hinglish
+                        </option>
+
+                    </select>
+
+
+
+                    <!-- SEARCH -->
+
+                    <button
+                        class="header-action"
+                        title="Search"
+                    >
+                        🔍
+                    </button>
+
+
+
+                    <!-- MORE -->
+
+                   <button
+    id="moreBtn"
+    class="header-action"
+    title="More"
+>
+    ⋮
+</button>
+
+                </div>
 
             </div>
 
 
+
+            <!-- ================= CHAT MESSAGES ================= -->
+
             <div class="chat-messages">
+
+
+                <div class="chat-date">
+                    Today
+                </div>
+
 
                 <div class="message ai-message">
                     finally tumne mujhe notice kia.
                 </div>
 
+
             </div>
 
 
+
+            <!-- ================= CHAT INPUT ================= -->
+
             <div class="chat-input">
+
+
+                <!-- EMOJI -->
+
+                <button
+                    class="input-icon"
+                    title="Emoji"
+                >
+                    😊
+                </button>
+
+
+
+                <!-- ATTACHMENT -->
+
+                <button
+                    class="input-icon"
+                    title="Attach"
+                >
+                    📎
+                </button>
+
+
+
+                <!-- MESSAGE -->
 
                 <input
                     type="text"
@@ -294,18 +400,44 @@
                     placeholder="Type a message..."
                 >
 
-                <button id="sendBtn">
-                    Send
+
+
+                <!-- IMAGE -->
+
+                <button
+                    class="input-icon"
+                    title="Image"
+                >
+                    🖼️
                 </button>
+
+
+
+                <!-- SEND -->
+
+                <button
+                    id="sendBtn"
+                    class="send-btn"
+                    title="Send"
+                >
+                    ➤
+                </button>
+
 
             </div>
 
+
         </section>
+
 
     </main>
 
 
+
+    <!-- ================= JAVASCRIPT ================= -->
+
     <script src="script.js"></script>
+
 
 </body>
 
