@@ -1,9 +1,12 @@
 package com.veyra.veyrabackend;
 
+import java.util.List;
+
 public class ChatRequest {
 
     private String message;
     private String story;
+    private List<ChatMessage> history;
 
     public String getMessage() {
         return message;
@@ -21,4 +24,11 @@ public class ChatRequest {
         this.story = story;
     }
 
+    public List<ChatMessage> getHistory() {
+        return history;
+    }
+
+    public void setHistory(List<ChatMessage> history) {
+        this.history = history;
+    }
 }
