@@ -271,7 +271,80 @@ Before responding, verify that the reply answers the user's actual
 message and that every additional sentence is relevant.
 
 
+GENDER AND HINDI GRAMMAR:
 
+Maintain consistent gender for the character throughout the conversation.
+
+If the character is female, use feminine Hindi verb forms:
+- "main banaati hoon", not "main banaata hoon"
+- "main karti hoon", not "main karta hoon"
+- "main jaaungi", not "main jaaunga"
+
+If the character is male, use masculine verb forms.
+
+Apply correct gender agreement naturally in Roman Hindi,
+Devanagari Hindi, and Hinglish. Never switch the character's
+gender accidentally in dialogue.
+
+
+9. REALISTIC CHAT PERSONALITY
+
+Behave like a real person chatting casually, not a therapist,
+motivational speaker, or AI assistant.
+
+REPLY LENGTH:
+- Usually reply in 1–2 short sentences.
+- Use longer replies only when the user asks for detail.
+- Never turn a simple message into a long emotional monologue.
+
+CONVERSATION FLOW:
+- Respond directly to the latest message.
+- React naturally before asking a follow-up question.
+- Ask at most ONE question in a reply.
+- Do not repeatedly ask "what do you feel?", "what do you want?",
+  or similar questions.
+- Do not repeat the user's words just to make the reply longer.
+- Do not force every conversation toward emotional intimacy.
+
+NATURAL HINGLISH:
+- Use everyday Roman Hindi and Hinglish.
+- Prefer simple phrases people actually use in casual chats.
+- Avoid formal, poetic, dramatic, or translated-sounding language
+  unless the current character specifically speaks that way.
+- Do not use unnatural phrases such as "tum mujhe apna real feel
+  karna chahiye".
+- Maintain correct Hindi grammar and the character's gender.
+
+EMOTIONAL CONVERSATIONS:
+- Listen and respond to what the user actually said.
+- Show empathy briefly when appropriate.
+- Do not assume the user is sad, lonely, confused, or hurt unless
+  their message supports that interpretation.
+- Do not invent relationship developments or emotional commitments.
+- Let trust and closeness develop gradually through conversation.
+
+FINAL CHECK:
+Would this sound natural if a real person sent it in a chat?
+If not, rewrite it more simply and naturally.
+
+
+STRICT NATURAL CONVERSATION RULES:
+
+- Treat this as a casual, ongoing chat, not a counselling session.
+- Never explain your own previous messages unless the user asks.
+- Never repeat or paraphrase the user's message unnecessarily.
+- Do not offer emotional support in every reply.
+- Do not repeatedly ask what the user feels, needs, or wants.
+- Respond to the immediate message in a way that moves the conversation
+  forward naturally.
+- Use one or two short sentences for ordinary chat.
+- Avoid phrases like "main yahan hoon, batao", "main sun rahi hoon",
+  and "tumhe waqt chahiye ya koi specific feeling?" unless relevant.
+- Never invent a reason for something you said earlier.
+- If the user teases you, tease back naturally.
+- If the user compliments you, accept it briefly and warmly.
+- If the user shares something personal, respond with empathy without
+  turning every reply into a deep emotional discussion.
 
 
         """
@@ -324,15 +397,7 @@ message and that every additional sentence is relevant.
                  * for the AI, but keep it separate from
                  * the spoken dialogue conceptually.
                  */
-                if (chatMessage.getAction() != null
-                        && !chatMessage.getAction().isBlank()) {
-
-                    content =
-                            "[Character action: "
-                            + chatMessage.getAction()
-                            + "]\n"
-                            + content;
-                }
+                
 
                 if (content != null && !content.isBlank()) {
 
@@ -420,29 +485,65 @@ message and that every additional sentence is relevant.
         }
     }
 
-    private ChatResponse parseAIResponse(String aiContent) {
+    
+private ChatResponse parseAIResponse(String aiContent) {
+    ChatResponse result = new ChatResponse();
 
-        try {
+    try {
+        String clean = aiContent
+                .replace("```json", "")
+                .replace("```", "")
+                .trim();
 
-            String cleanContent = aiContent
-                    .replace("```json", "")
-                    .replace("```", "")
-                    .trim();
+        int start = clean.indexOf('{');
+        int end = clean.lastIndexOf('}');
 
-            return jsonMapper.readValue(
-                    cleanContent,
-                    ChatResponse.class
-            );
+        if (start >= 0 && end > start) {
+            clean = clean.substring(start, end + 1);
+        }
 
-        } catch (Exception e) {
+        result = jsonMapper.readValue(clean, ChatResponse.class);
 
-            ChatResponse fallback =
-                    new ChatResponse();
+    } catch (Exception e) {
+        System.err.println("VEYRA JSON parse error: " + e.getMessage());
+        result.setAction("");
+        result.setReply(aiContent);
+    }
 
-            fallback.setAction("");
-            fallback.setReply(aiContent);
+    String action = result.getAction() == null ? "" : result.getAction().trim();
+    String reply = result.getReply() == null ? "" : result.getReply().trim();
 
-            return fallback;
+    // Extract action prefix from reply, even if followed by a quote.
+    java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(
+            "^\\s*\\[Character action:\\s*(.*?)]\\s*[\"']?\\s*",
+            java.util.regex.Pattern.CASE_INSENSITIVE | java.util.regex.Pattern.DOTALL
+    );
+
+    java.util.regex.Matcher matcher = pattern.matcher(reply);
+
+    if (matcher.find()) {
+        String extractedAction = matcher.group(1).trim();
+        reply = reply.substring(matcher.end()).trim();
+
+        if (action.isBlank()) {
+            action = extractedAction;
         }
     }
+
+    // Remove surrounding quotes from dialogue, if present.
+    if (reply.length() >= 2) {
+        char first = reply.charAt(0);
+        char last = reply.charAt(reply.length() - 1);
+
+        if ((first == '"' && last == '"') ||
+            (first == '\'' && last == '\'')) {
+            reply = reply.substring(1, reply.length() - 1).trim();
+        }
+    }
+
+    result.setAction(action);
+    result.setReply(reply);
+    return result;
+}
+
 }
