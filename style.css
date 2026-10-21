@@ -501,18 +501,14 @@ main {
 
     border-bottom-right-radius: 5px;
 }
-
-.action-message {
-    align-self: flex-start;
-
-    color: #888894;
-
-    font-size: 13px;
+.ai-action {
+    display: block;
+    color: #8a8a8a;
     font-style: italic;
-
-    background: transparent;
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 22px;
 }
-
 
 /* =====================================================
    CHAT INPUT
@@ -1127,4 +1123,62 @@ main {
 .emoji-picker button:hover {
     background: rgba(255,255,255,0.08);
     transform: scale(1.15);
+}
+
+
+
+/* Character action / narration */
+.action-message {
+    color: #b9a0ff;
+    font-size: 13px;
+    font-style: italic;
+    opacity: 0.9;
+    padding: 4px 12px;
+    margin: 6px 0;
+}
+
+/* Spoken dialogue */
+.message.ai .message-text {
+    color: #f5f5f7;
+    font-style: normal;
+}
+
+/* AI character action */
+.ai-action {
+    color: #b9a0ff;
+    font-size: 13px;
+    font-style: italic;
+    opacity: 0.9;
+    margin-bottom: 8px;
+}
+
+/* AI spoken dialogue */
+.ai-message .message-text {
+    color: #f5f5f7;
+    font-size: 15px;
+    font-style: normal;
+}
+
+.user-action {
+    color: #77aaff;
+    font-style: italic;
+    display: block;
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.user-action {
+    color: #77aaff;
+    font-style: italic;
+    display: block;
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.user-action {
+    color: #77aaff;
+    font-style: italic;
+    display: block;
+    margin-bottom: 8px;
+    line-height: 1.5;
 }
