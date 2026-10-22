@@ -606,6 +606,9 @@ function renderChatHistory() {
 
         }
     );
+    requestAnimationFrame(() => {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+});
 
 
     /* SCROLL TO BOTTOM */
@@ -1086,6 +1089,7 @@ if (actionMatch) {
 
     data.reply = replyText.substring(actionMatch[0].length).trim();
 }
+data.reply = data.reply.replace(/["']\s*$/, "").trim();
 
             console.log("VEYRA raw response:", data);
 console.log("Action:", data.action);
