@@ -874,6 +874,7 @@ main {
     font-style: italic;
     text-align: center;
     background: transparent;
+    animation: messageAppear 0.25s ease-out;
 }
 
 /* Message animation */
