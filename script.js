@@ -1241,20 +1241,24 @@ function sendMessage() {
        USER MESSAGE
        ================================================= */
 
-    const userMessage =
-        createMessageElement({
+    const actionMatch = messageText.match(
+    /^\*([^*]+)\*\s*([\s\S]*)$/
+);
 
-            type:
-                "user",
+const userAction = actionMatch
+    ? actionMatch[1].trim()
+    : "";
 
-            text:
-                messageText,
+const userDialogue = actionMatch
+    ? actionMatch[2].trim()
+    : messageText;
 
-            time:
-                getCurrentTime()
-
-        });
-
+const userMessage = createMessageElement({
+    type: "user",
+    text: userDialogue,
+    action: userAction,
+    time: getCurrentTime()
+});
 
     chatMessages.appendChild(
         userMessage
@@ -1263,11 +1267,11 @@ function sendMessage() {
 
     /* SAVE */
 
-    addMessageToHistory(
-        "user",
-        messageText
-    );
-
+   addMessageToHistory(
+    "user",
+    userDialogue,
+    userAction
+);
 
     /* CLEAR INPUT */
 
