@@ -1151,62 +1151,34 @@ console.log("Reply:", data.reply);
 
     }
 
-    catch (error) {
-
-        if (typing) {
-            typing.remove();
-        }
-
-
-        console.error(
-            "VEYRA AI Error:",
-            error
-        );
-
-
-        const errorText =
-            "Hmm... connection thoda slow hai. Ek baar phir try karo 👀";
-
-
-        const errorMessage =
-            createMessageElement({
-
-                type:
-                    "ai",
-
-                text:
-                    errorText,
-
-                action:
-                    "",
-
-                time:
-                    getCurrentTime()
-
-            });
-
-
-        chatMessages.appendChild(
-            errorMessage
-        );
-
-
-        addMessageToHistory(
-
-            "ai",
-
-            errorText,
-
-            ""
-
-        );
-
-
-        chatMessages.scrollTop =
-            chatMessages.scrollHeight;
-
+catch (error) {
+    if (typing) {
+        typing.remove();
     }
 
+    console.error("VEYRA AI Error:", error);
+
+    let errorText =
+        "Hmm... connection thoda slow hai. Ek baar phir try karo 👀";
+
+    if (error.message.startsWith("AI server error:")) {
+        errorText =
+            "VEYRA abhi reply nahi kar pa raha. Thodi der baad try karo 👀";
+    }
+
+    const errorMessage = createMessageElement({
+        type: "ai",
+        text: errorText,
+        action: "",
+        time: getCurrentTime()
+    });
+
+    chatMessages.appendChild(errorMessage);
+
+    // Error ko conversation history mein save nahi karna.
+
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
 }
 /* =====================================================
    SEND MESSAGE
