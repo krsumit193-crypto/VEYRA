@@ -390,24 +390,37 @@ STRICT NATURAL CONVERSATION RULES:
                     role = "assistant";
                 }
 
-                String content = chatMessage.getText();
+              
+String content = chatMessage.getText();
+String action = chatMessage.getAction();
 
-                /*
-                 * Include character action as context
-                 * for the AI, but keep it separate from
-                 * the spoken dialogue conceptually.
-                 */
-                
+if (content == null) {
+    content = "";
+}
 
-                if (content != null && !content.isBlank()) {
+if (action == null) {
+    action = "";
+}
 
-                    messages.add(
-                            Map.of(
-                                    "role", role,
-                                    "content", content
-                            )
-                    );
-                }
+String historyContent;
+
+if ("assistant".equals(role) && !action.isBlank()) {
+    historyContent = "[Character action: " + action + "] " + content;
+} else if ("user".equals(role) && !action.isBlank()) {
+    historyContent = "[User action: " + action + "] " + content;
+} else {
+    historyContent = content;
+}
+
+if (!historyContent.isBlank()) {
+    messages.add(
+        Map.of(
+            "role", role,
+            "content", historyContent
+        )
+    );
+}
+  
             }
         }
 
