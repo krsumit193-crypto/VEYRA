@@ -1183,3 +1183,10 @@ main {
     margin-bottom: 8px;
     line-height: 1.5;
 }
+.user-action {
+    color: #77aaff;
+    font-style: italic;
+    display: block;
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
