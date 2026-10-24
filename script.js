@@ -130,6 +130,7 @@ const moreBtn =
    ===================================================== */
 
 let currentStoryId = null;
+let isWaitingForAI = false;
 
 
 /* =====================================================
@@ -1028,7 +1029,11 @@ async function sendDemoAIResponse() {
     if (!currentStoryId) {
         return;
     }
+isWaitingForAI = true;
 
+if (sendBtn) {
+    sendBtn.disabled = true;
+}
     const typing =
         showTypingIndicator();
 
@@ -1185,6 +1190,9 @@ catch (error) {
    ===================================================== */
 
 function sendMessage() {
+    if (isWaitingForAI) {
+    return;
+}
 
     if (!messageInput) {
         return;
