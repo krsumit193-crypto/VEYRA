@@ -1184,6 +1184,13 @@ catch (error) {
 
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
+finally {
+    isWaitingForAI = false;
+
+    if (sendBtn) {
+        sendBtn.disabled = false;
+    }
+}
 }
 /* =====================================================
    SEND MESSAGE
