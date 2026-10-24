@@ -1179,6 +1179,17 @@ catch (error) {
     });
 
     chatMessages.appendChild(errorMessage);
+    const retryButton = document.createElement("button");
+
+retryButton.textContent = "Retry";
+retryButton.className = "retry-button";
+
+retryButton.addEventListener("click", () => {
+    errorMessage.remove();
+    sendDemoAIResponse();
+});
+
+chatMessages.appendChild(retryButton);
 
     // Error ko conversation history mein save nahi karna.
 
@@ -1190,6 +1201,14 @@ finally {
     if (sendBtn) {
         sendBtn.disabled = false;
     }
+    if (messageInput) {
+    messageInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" && !event.shiftKey) {
+            event.preventDefault();
+            sendMessage();
+        }
+    });
+}
 }
 }
 /* =====================================================
