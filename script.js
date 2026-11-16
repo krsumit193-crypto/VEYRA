@@ -2,7 +2,6 @@
    VEYRA — CHAT SYSTEM
    ===================================================== */
 
-
 /* =====================================================
    EXPLORE STORIES
    ===================================================== */
@@ -12,7 +11,6 @@ const exploreBtn =
 
 const storiesSection =
     document.getElementById("stories");
-
 
 if (exploreBtn && storiesSection) {
 
@@ -32,7 +30,6 @@ if (exploreBtn && storiesSection) {
 
         let startTime = null;
 
-
         function animation(currentTime) {
 
             if (startTime === null) {
@@ -48,12 +45,10 @@ if (exploreBtn && storiesSection) {
             const ease =
                 1 - Math.pow(1 - progress, 3);
 
-
             window.scrollTo(
                 0,
                 startPosition + distance * ease
             );
-
 
             if (progress < 1) {
                 requestAnimationFrame(animation);
@@ -61,13 +56,11 @@ if (exploreBtn && storiesSection) {
 
         }
 
-
         requestAnimationFrame(animation);
 
     });
 
 }
-
 
 /* =====================================================
    CREATE STORY
@@ -75,7 +68,6 @@ if (exploreBtn && storiesSection) {
 
 const createStoryBtn =
     document.getElementById("createStoryBtn");
-
 
 if (createStoryBtn) {
 
@@ -88,7 +80,6 @@ if (createStoryBtn) {
     });
 
 }
-
 
 /* =====================================================
    CHAT ELEMENTS
@@ -124,14 +115,12 @@ const languageSelect =
 const moreBtn =
     document.getElementById("moreBtn");
 
-
 /* =====================================================
    CHAT STATE
    ===================================================== */
 
 let currentStoryId = null;
 let isWaitingForAI = false;
-
 
 /* =====================================================
    STORY DATA
@@ -161,7 +150,6 @@ const storiesData = {
 
     },
 
-
     story2: {
 
         title:
@@ -183,7 +171,6 @@ const storiesData = {
             "Online"
 
     },
-
 
     story3: {
 
@@ -207,7 +194,6 @@ const storiesData = {
 
     },
 
-
     story4: {
 
         title:
@@ -230,7 +216,6 @@ const storiesData = {
 
     },
 
-
     story5: {
 
         title:
@@ -252,7 +237,6 @@ const storiesData = {
             "Online"
 
     },
-
 
     story6: {
 
@@ -278,7 +262,6 @@ const storiesData = {
 
 };
 
-
 /* =====================================================
    CHAT HISTORY — LOCAL STORAGE
    ===================================================== */
@@ -290,11 +273,9 @@ function getChatHistory(storyId) {
             `veyra_chat_${storyId}`
         );
 
-
     if (!saved) {
         return [];
     }
-
 
     try {
 
@@ -318,7 +299,6 @@ function getChatHistory(storyId) {
 
 }
 
-
 /* =====================================================
    SAVE CHAT HISTORY
    ===================================================== */
@@ -332,14 +312,12 @@ function saveChatHistory(
         return;
     }
 
-
     localStorage.setItem(
         `veyra_chat_${storyId}`,
         JSON.stringify(messages)
     );
 
 }
-
 
 /* =====================================================
    GET CURRENT TIME
@@ -356,7 +334,6 @@ function getCurrentTime() {
     );
 
 }
-
 
 /* =====================================================
    ADD MESSAGE TO HISTORY
@@ -400,7 +377,6 @@ function addMessageToHistory(
 
 }
 
-
 /* =====================================================
    CREATE MESSAGE ELEMENT
    ===================================================== */
@@ -412,11 +388,9 @@ function createMessageElement(
     const message =
         document.createElement("div");
 
-
     message.classList.add(
         "message"
     );
-
 
     /* MESSAGE TYPE */
 
@@ -437,7 +411,6 @@ function createMessageElement(
         );
 
     }
-
 
 /* =================================================
    USER ACTION
@@ -469,22 +442,18 @@ if (
         const action =
             document.createElement("div");
 
-
         action.classList.add(
             "ai-action"
         );
 
-
         action.textContent =
             messageData.action;
-
 
         message.appendChild(
             action
         );
 
     }
-
 
     /* =================================================
        MESSAGE TEXT
@@ -500,17 +469,14 @@ if (
 
            text.classList.add("message-text");
 
-
         text.textContent =
             messageData.text;
-
 
         message.appendChild(
             text
         );
 
     }
-
 
     /* =================================================
        TIMESTAMP
@@ -519,15 +485,12 @@ if (
     const meta =
         document.createElement("span");
 
-
     meta.classList.add(
         "message-meta"
     );
 
-
     meta.textContent =
         messageData.time || "Now";
-
 
     /* READ RECEIPT */
 
@@ -540,11 +503,9 @@ if (
 
     }
 
-
     message.appendChild(
         meta
     );
-
 
     return message;
 
@@ -560,29 +521,23 @@ function renderChatHistory() {
         return;
     }
 
-
     chatMessages.innerHTML = "";
-
 
     /* DATE */
 
     const date =
         document.createElement("div");
 
-
     date.classList.add(
         "chat-date"
     );
 
-
     date.textContent =
         "Today";
-
 
     chatMessages.appendChild(
         date
     );
-
 
     /* HISTORY */
 
@@ -591,7 +546,6 @@ function renderChatHistory() {
             currentStoryId
         );
 
-
     history.forEach(
         messageData => {
 
@@ -599,7 +553,6 @@ function renderChatHistory() {
                 createMessageElement(
                     messageData
                 );
-
 
             chatMessages.appendChild(
                 message
@@ -611,14 +564,12 @@ function renderChatHistory() {
     chatMessages.scrollTop = chatMessages.scrollHeight;
 });
 
-
     /* SCROLL TO BOTTOM */
 
     chatMessages.scrollTop =
         chatMessages.scrollHeight;
 
 }
-
 
 /* =====================================================
    OPEN STORY
@@ -629,57 +580,46 @@ function openStory(storyId) {
     const story =
         storiesData[storyId];
 
-
     if (!story) {
         return;
     }
-
 
     /* CURRENT STORY */
 
     currentStoryId =
         storyId;
 
-
     /* CHARACTER NAME */
 
     chatHeader.textContent =
         story.title;
-
 
     /* STATUS */
 
     chatStatus.textContent =
         story.status;
 
-
     /* PROFILE IMAGE */
 
     chatAvatar.innerHTML = "";
 
-
     const avatarImage =
         document.createElement("img");
-
 
     avatarImage.src =
         story.avatar;
 
-
     avatarImage.alt =
         story.title;
-
 
     chatAvatar.appendChild(
         avatarImage
     );
 
-
     /* CHAT BACKGROUND */
 
     chatMessages.className =
         "chat-messages";
-
 
     if (story.backgroundClass) {
 
@@ -689,14 +629,12 @@ function openStory(storyId) {
 
     }
 
-
     /* FIRST OPENING MESSAGE */
 
     let history =
         getChatHistory(
             storyId
         );
-
 
     if (history.length === 0) {
 
@@ -717,7 +655,6 @@ function openStory(storyId) {
 
         ];
 
-
         saveChatHistory(
             storyId,
             history
@@ -725,17 +662,14 @@ function openStory(storyId) {
 
     }
 
-
     /* RENDER */
 
     renderChatHistory();
-
 
     /* OPEN CHAT */
 
     chatScreen.style.display =
         "block";
-
 
     /* FOCUS */
 
@@ -750,7 +684,6 @@ function openStory(storyId) {
     }
 
 }
-
 
 /* =====================================================
    STORY CARD EVENTS
@@ -773,7 +706,6 @@ document
 
     });
 
-
 /* =====================================================
    BACK BUTTON
    ===================================================== */
@@ -792,7 +724,6 @@ if (backBtn) {
 
 }
 
-
 /* =====================================================
    ACTION MESSAGE
    ===================================================== */
@@ -805,25 +736,20 @@ function addActionMessage(
         return;
     }
 
-
     const action =
         document.createElement("div");
-
 
     action.classList.add(
         "message",
         "action-message"
     );
 
-
     action.textContent =
         text;
-
 
     chatMessages.appendChild(
         action
     );
-
 
     /* SAVE */
 
@@ -832,12 +758,10 @@ function addActionMessage(
         text
     );
 
-
     chatMessages.scrollTop =
         chatMessages.scrollHeight;
 
 }
-
 
 /* =====================================================
    TYPING INDICATOR
@@ -848,11 +772,9 @@ function showTypingIndicator() {
     const typing =
         document.createElement("div");
 
-
     typing.classList.add(
         "typing-indicator"
     );
-
 
     typing.innerHTML = `
 
@@ -864,20 +786,16 @@ function showTypingIndicator() {
 
     `;
 
-
     chatMessages.appendChild(
         typing
     );
 
-
     chatMessages.scrollTop =
         chatMessages.scrollHeight;
-
 
     return typing;
 
 }
-
 
 /* =====================================================
    DEMO AI RESPONSE
@@ -1042,7 +960,6 @@ if (sendBtn) {
         const story =
             storiesData[currentStoryId];
 
-
         const response =
             await fetch(
                 "http://localhost:8080/chat",
@@ -1065,11 +982,9 @@ history: getChatHistory(currentStoryId).filter(
                 }
             );
 
-
         if (typing) {
             typing.remove();
         }
-
 
         if (!response.ok) {
             throw new Error(
@@ -1077,7 +992,6 @@ history: getChatHistory(currentStoryId).filter(
                 response.status
             );
         }
-
 
         const data =
             await response.json();
@@ -1099,7 +1013,6 @@ data.reply = data.reply.replace(/["']\s*$/, "").trim();
             console.log("VEYRA raw response:", data);
 console.log("Action:", data.action);
 console.log("Reply:", data.reply);
-
 
         /* =========================================
            AI ACTION + REPLY
@@ -1129,11 +1042,9 @@ console.log("Reply:", data.reply);
 
                 });
 
-
             chatMessages.appendChild(
                 aiMessage
             );
-
 
             addMessageToHistory(
 
@@ -1147,12 +1058,10 @@ console.log("Reply:", data.reply);
 
         }
 
-
         /* SCROLL */
 
         chatMessages.scrollTop =
             chatMessages.scrollHeight;
-
 
     }
 
@@ -1224,24 +1133,20 @@ function sendMessage() {
         return;
     }
 
-
     if (!currentStoryId) {
         return;
     }
-
 
     const messageText =
         messageInput.value.trim();
 
         window.lastUserMessage = messageText;
 
-
     /* EMPTY */
 
     if (messageText === "") {
         return;
     }
-
 
     /* =================================================
        USER MESSAGE
@@ -1270,7 +1175,6 @@ const userMessage = createMessageElement({
         userMessage
     );
 
-
     /* SAVE */
 
    addMessageToHistory(
@@ -1282,7 +1186,6 @@ const userMessage = createMessageElement({
     /* CLEAR INPUT */
 
     messageInput.value = "";
-
 
     /* =================================================
        SIMPLE STORY REACTION
@@ -1300,13 +1203,11 @@ const userMessage = createMessageElement({
 
     }
 
-
     /* =================================================
        DEMO AI TYPING
        ================================================= */
 
     sendDemoAIResponse();
-
 
     /* SCROLL */
 
@@ -1314,7 +1215,6 @@ const userMessage = createMessageElement({
         chatMessages.scrollHeight;
 
 }
-
 
 /* =====================================================
    SEND BUTTON
@@ -1328,7 +1228,6 @@ if (sendBtn) {
     );
 
 }
-
 
 /* =====================================================
    ENTER KEY
@@ -1356,7 +1255,6 @@ if (messageInput) {
 
 }
 
-
 /* =====================================================
    LANGUAGE
    ===================================================== */
@@ -1369,7 +1267,6 @@ if (languageSelect) {
 
             const selectedLanguage =
                 languageSelect.value;
-
 
             if (
                 selectedLanguage === "hi"
@@ -1401,7 +1298,6 @@ if (languageSelect) {
 
 }
 
-
 /* =====================================================
    CLEAR CURRENT CHAT
    ===================================================== */
@@ -1418,28 +1314,23 @@ function clearCurrentChat() {
 
     }
 
-
     const story =
         storiesData[currentStoryId];
-
 
     const confirmed =
         confirm(
             `Clear chat with "${story.title}"?\n\nThis will remove only this conversation.`
         );
 
-
     if (!confirmed) {
         return;
     }
-
 
     /* REMOVE SAVED CHAT */
 
     localStorage.removeItem(
         `veyra_chat_${currentStoryId}`
     );
-
 
     /* RESTORE OPENING MESSAGE */
 
@@ -1466,13 +1357,11 @@ function clearCurrentChat() {
 
     );
 
-
     /* RENDER */
 
     renderChatHistory();
 
 }
-
 
 /* =====================================================
    MORE BUTTON
@@ -1486,7 +1375,6 @@ if (moreBtn) {
     );
 
 }
-
 
 /* =====================================================
    INITIAL STATE
@@ -1519,7 +1407,6 @@ const emojiList = [
     "✨", "🤍", "🫶", "👍", "🙏"
 ];
 
-
 if (emojiBtn && messageInput) {
 
     const emojiPicker =
@@ -1527,7 +1414,6 @@ if (emojiBtn && messageInput) {
 
     emojiPicker.className =
         "emoji-picker";
-
 
     emojiList.forEach(emoji => {
 
@@ -1537,7 +1423,6 @@ if (emojiBtn && messageInput) {
         button.type = "button";
 
         button.textContent = emoji;
-
 
         button.addEventListener(
             "click",
@@ -1550,19 +1435,16 @@ if (emojiBtn && messageInput) {
             }
         );
 
-
         emojiPicker.appendChild(
             button
         );
 
     });
 
-
     /* Picker ko chat input ke andar rakho */
 
     const chatInput =
         document.querySelector(".chat-input");
-
 
     if (chatInput) {
 
@@ -1574,7 +1456,6 @@ if (emojiBtn && messageInput) {
         );
 
     }
-
 
     /* Toggle */
 
@@ -1592,7 +1473,6 @@ if (emojiBtn && messageInput) {
 
         }
     );
-
 
     /* Outside click */
 
@@ -1615,5 +1495,4 @@ if (emojiBtn && messageInput) {
     );
 
 }
-
 

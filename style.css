@@ -20,7 +20,6 @@ body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
-
 /* =====================================================
    NAVBAR
    ===================================================== */
@@ -71,7 +70,6 @@ nav a:hover {
     color: #ef9cf3;
 }
 
-
 /* =====================================================
    MAIN
    ===================================================== */
@@ -81,7 +79,6 @@ main {
     margin: auto;
     padding: 55px 0;
 }
-
 
 /* =====================================================
    HERO
@@ -141,7 +138,6 @@ main {
         0 12px 30px rgba(224, 139, 235, 0.18);
 }
 
-
 /* =====================================================
    STORIES
    ===================================================== */
@@ -163,7 +159,6 @@ main {
     color: #92929e;
 }
 
-
 /* Horizontal story layout */
 
 #stories > div {
@@ -182,7 +177,6 @@ main {
 #stories > div::-webkit-scrollbar {
     display: none;
 }
-
 
 /* =====================================================
    STORY CARD
@@ -255,7 +249,6 @@ main {
     transform: scale(1.06);
 }
 
-
 /* =====================================================
    STORY INFO
    ===================================================== */
@@ -300,7 +293,6 @@ main {
     font-size: 13px;
     line-height: 1.55;
 }
-
 
 /* =====================================================
    CUSTOM STORY
@@ -353,7 +345,6 @@ main {
     cursor: pointer;
 }
 
-
 /* =====================================================
    CHAT SCREEN
    ===================================================== */
@@ -368,7 +359,6 @@ main {
 
     background: #0b0b10;
 }
-
 
 /* =====================================================
    CHAT HEADER
@@ -442,123 +432,9 @@ main {
     border-color: #e19ae8;
 }
 
-
-/* =====================================================
-   CHAT MESSAGES
-   ===================================================== */
-
-.chat-messages {
-    height: calc(100vh - 155px);
-
-    padding: 30px;
-
-    overflow-y: auto;
-
-    display: flex;
-    flex-direction: column;
-
-    background:
-        radial-gradient(
-            circle at center,
-            rgba(190, 100, 210, 0.035),
-            transparent 45%
-        );
-}
-
-.message {
-    width: fit-content;
-    max-width: min(65%, 600px);
-
-    margin-bottom: 12px;
-
-    padding: 12px 16px;
-
-    border-radius: 17px;
-
-    line-height: 1.5;
-
-    font-size: 14px;
-}
-
-.ai-message {
-    align-self: flex-start;
-
-    background: #20202a;
-
-    border-bottom-left-radius: 5px;
-}
-
-.user-message {
-    align-self: flex-end;
-
-    background: linear-gradient(
-        135deg,
-        #a865c2,
-        #d17cdb
-    );
-
-    color: white;
-
-    border-bottom-right-radius: 5px;
-}
-.ai-action {
-    display: block;
-    color: #8a8a8a;
-    font-style: italic;
-    font-size: 15px;
-    line-height: 1.6;
-    margin-bottom: 22px;
-}
-
 /* =====================================================
    CHAT INPUT
    ===================================================== */
-
-.chat-input {
-    position: absolute;
-
-    left: 0;
-    right: 0;
-    bottom: 0;
-
-    display: flex;
-    gap: 10px;
-
-    padding: 18px 25px;
-
-    border-top: 1px solid rgba(255, 255, 255, 0.07);
-
-    background: rgba(18, 18, 25, 0.96);
-}
-
-.chat-input input {
-    flex: 1;
-
-    min-width: 0;
-
-    padding: 14px 17px;
-
-    border: 1px solid #30303b;
-    border-radius: 14px;
-
-    background: #101017;
-    color: white;
-
-    outline: none;
-
-    font-size: 14px;
-
-    transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-.chat-input input:focus {
-    border-color: #d37cdd;
-
-    box-shadow:
-        0 0 0 3px rgba(211, 124, 221, 0.08);
-}
 
 .chat-input button {
     padding: 13px 25px;
@@ -587,7 +463,6 @@ main {
     transform: translateY(-2px);
     filter: brightness(1.08);
 }
-
 
 /* =====================================================
    MOBILE
@@ -647,16 +522,6 @@ main {
 
 }
 
-
-
-
-
-
-
-
-
-
-
 /* =====================================================
    CHAT AVATAR FIX
    ===================================================== */
@@ -685,7 +550,6 @@ main {
     object-position: center;
 }
 
-
 /* =====================================================
    CHAT USER
    ===================================================== */
@@ -703,7 +567,6 @@ main {
 .chat-user p {
     margin: 3px 0 0;
 }
-
 
 /* =====================================================
    CHAT ACTIONS
@@ -736,17 +599,9 @@ main {
     background: rgba(255, 255, 255, 0.08);
 }
 
-
 /* =====================================================
    VEYRA — DIFFERENT CHAT BACKGROUNDS
    ===================================================== */
-
-.chat-messages {
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
 
 /* Seat 27 — College / Mystery */
 
@@ -756,7 +611,6 @@ main {
         linear-gradient(135deg, #15131a, #211c22);
 }
 
-
 /* 3:17 AM — Late Night */
 
 .chat-messages.bg-317 {
@@ -764,7 +618,6 @@ main {
         radial-gradient(circle at 75% 15%, rgba(110, 90, 180, 0.14), transparent 35%),
         linear-gradient(135deg, #090a12, #171625);
 }
-
 
 /* Fake Girlfriend — Warm Romance */
 
@@ -774,7 +627,6 @@ main {
         linear-gradient(135deg, #171017, #24151f);
 }
 
-
 /* Rival Next Door — Dark / Dramatic */
 
 .chat-messages.bg-rival {
@@ -782,7 +634,6 @@ main {
         radial-gradient(circle at 15% 25%, rgba(180, 70, 90, 0.12), transparent 32%),
         linear-gradient(135deg, #100d12, #211418);
 }
-
 
 /* She Remembers Everything — Emotional */
 
@@ -792,7 +643,6 @@ main {
         linear-gradient(135deg, #101016, #1b1a27);
 }
 
-
 /* Summer Secret — Sunset */
 
 .chat-messages.bg-summer {
@@ -801,18 +651,27 @@ main {
         linear-gradient(135deg, #151016, #26191b);
 }
 
-
 /* =====================================================
    VEYRA — PREMIUM CHAT POLISH
    ===================================================== */
 
 .chat-messages {
+    height: calc(100vh - 155px);
     padding: 28px 6%;
     display: flex;
     flex-direction: column;
     gap: 10px;
     overflow-y: auto;
     scroll-behavior: smooth;
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(190, 100, 210, 0.035),
+            transparent 45%
+        );
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 /* Hide scrollbar */
@@ -838,7 +697,9 @@ main {
 
 /* Common message */
 .message {
+    width: fit-content;
     max-width: min(70%, 520px);
+    margin-bottom: 12px;
     padding: 11px 15px;
     border-radius: 16px;
     font-size: 14px;
@@ -865,18 +726,6 @@ main {
     box-shadow: 0 5px 20px rgba(255,79,154,0.12);
 }
 
-/* Action / roleplay */
-.action-message {
-    align-self: center;
-    max-width: 80%;
-    color: #aaa;
-    font-size: 12px;
-    font-style: italic;
-    text-align: center;
-    background: transparent;
-    animation: messageAppear 0.25s ease-out;
-}
-
 /* Message animation */
 @keyframes messageAppear {
 
@@ -894,6 +743,10 @@ main {
 
 /* Input area */
 .chat-input {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -997,7 +850,6 @@ main {
 
 }
 
-
 /* =====================================================
    VEYRA — MESSAGE META
    ===================================================== */
@@ -1061,11 +913,6 @@ main {
 
 }
 
-
-/* =====================================================
-   VEYRA — EMOJI PICKER
-   ===================================================== */
-
 /* =====================================================
    VEYRA — EMOJI PICKER
    ===================================================== */
@@ -1126,13 +973,16 @@ main {
     transform: scale(1.15);
 }
 
-
-
 /* Character action / narration */
 .action-message {
+    align-self: center;
+    max-width: 80%;
     color: #b9a0ff;
     font-size: 13px;
     font-style: italic;
+    text-align: center;
+    background: transparent;
+    animation: messageAppear 0.25s ease-out;
     opacity: 0.9;
     padding: 4px 12px;
     margin: 6px 0;
@@ -1146,10 +996,12 @@ main {
 
 /* AI character action */
 .ai-action {
+    display: block;
     color: #b9a0ff;
     font-size: 13px;
     font-style: italic;
     opacity: 0.9;
+    line-height: 1.6;
     margin-bottom: 8px;
 }
 
@@ -1160,29 +1012,6 @@ main {
     font-style: normal;
 }
 
-.user-action {
-    color: #77aaff;
-    font-style: italic;
-    display: block;
-    margin-bottom: 8px;
-    line-height: 1.5;
-}
-
-.user-action {
-    color: #77aaff;
-    font-style: italic;
-    display: block;
-    margin-bottom: 8px;
-    line-height: 1.5;
-}
-
-.user-action {
-    color: #77aaff;
-    font-style: italic;
-    display: block;
-    margin-bottom: 8px;
-    line-height: 1.5;
-}
 .user-action {
     color: #77aaff;
     font-style: italic;
