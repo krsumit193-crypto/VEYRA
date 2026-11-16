@@ -390,37 +390,34 @@ STRICT NATURAL CONVERSATION RULES:
                     role = "assistant";
                 }
 
-              
-String content = chatMessage.getText();
-String action = chatMessage.getAction();
+                String content = chatMessage.getText();
+                String action = chatMessage.getAction();
 
-if (content == null) {
-    content = "";
-}
+                if (content == null) {
+                    content = "";
+                }
 
-if (action == null) {
-    action = "";
-}
+                if (action == null) {
+                    action = "";
+                }
 
-String historyContent;
+                String historyContent;
+                if ("assistant".equals(role) && !action.isBlank()) {
+                    historyContent = "[Character action: " + action + "] " + content;
+                } else if ("user".equals(role) && !action.isBlank()) {
+                    historyContent = "[User action: " + action + "] " + content;
+                } else {
+                    historyContent = content;
+                }
 
-if ("assistant".equals(role) && !action.isBlank()) {
-    historyContent = "[Character action: " + action + "] " + content;
-} else if ("user".equals(role) && !action.isBlank()) {
-    historyContent = "[User action: " + action + "] " + content;
-} else {
-    historyContent = content;
-}
-
-if (!historyContent.isBlank()) {
-    messages.add(
-        Map.of(
-            "role", role,
-            "content", historyContent
-        )
-    );
-}
-  
+                if (!historyContent.isBlank()) {
+                    messages.add(
+                            Map.of(
+                                    "role", role,
+                                    "content", historyContent
+                            )
+                    );
+                }
             }
         }
 

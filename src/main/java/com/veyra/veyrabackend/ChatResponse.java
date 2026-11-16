@@ -1,22 +1,22 @@
 package com.veyra.veyrabackend;
 
 public class ChatResponse {
-  private String action;
-private String reply;
-public String getAction() {
-    return action;
-}
+    private String action;
+    private String reply;
 
-public void setAction(String action) {
-    this.action = action;
-}
+    public String getAction() {
+        return action;
+    }
 
-public String getReply() {
-    return reply;
-}
+    public void setAction(String action) {
+        this.action = action;
+    }
 
-public void setReply(String reply) {
-    this.reply = reply;
-}
-  
+    public String getReply() {
+        return reply;
+    }
+
+    public void setReply(String reply) {
+        this.reply = reply;
+    }
 }
