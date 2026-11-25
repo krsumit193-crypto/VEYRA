@@ -96,7 +96,7 @@ The frontend is served by Spring Boot, so there is nothing else to start.
 |---|---|---|
 | `openrouter.api.key` | `OPENROUTER_API_KEY` | empty |
 | `openrouter.model` | `OPENROUTER_MODEL` | `openrouter/free` |
-| `openrouter.image.model` | `OPENROUTER_IMAGE_MODEL` | `google/gemini-2.5-flash-image-preview` |
+| `openrouter.image.model` | `OPENROUTER_IMAGE_MODEL` | `recraft/recraft-v4.1-flash-v2:free` |
 | `veyra.daily.cron` | `VEYRA_DAILY_CRON` | `0 0 23 * * *` (11 PM) |
 | `veyra.daily.zone` | `VEYRA_DAILY_ZONE` | `Asia/Kolkata` |
 | `veyra.data.dir` | `VEYRA_DATA_DIR` | `data` |
