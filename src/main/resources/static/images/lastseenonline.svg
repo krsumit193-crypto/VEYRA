@@ -5,19 +5,39 @@
       <stop offset="0.55" stop-color="#142038"/>
       <stop offset="1" stop-color="#1d3050"/>
     </linearGradient>
-    <radialGradient id="glow" cx="0.5" cy="0.36" r="0.6">
-      <stop offset="0" stop-color="#ffffff" stop-opacity="0.20"/>
+    <radialGradient id="glow" cx="0.5" cy="0.34" r="0.62">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.22"/>
       <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
     </radialGradient>
-    <linearGradient id="shade" x1="0" y1="0.4" x2="0" y2="1">
+    <radialGradient id="vignette" cx="0.5" cy="0.45" r="0.78">
+      <stop offset="0.55" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.72"/>
+    </radialGradient>
+    <linearGradient id="shade" x1="0" y1="0.42" x2="0" y2="1">
       <stop offset="0" stop-color="#000000" stop-opacity="0"/>
-      <stop offset="1" stop-color="#000000" stop-opacity="0.88"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.92"/>
     </linearGradient>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
   </defs>
   <rect width="600" height="900" fill="url(#bg)"/>
   <rect width="600" height="900" fill="url(#glow)"/>
+  <g fill="#ffffff" fill-opacity="0.10">
+    <circle cx="120" cy="180" r="26"/>
+    <circle cx="470" cy="140" r="16"/>
+    <circle cx="520" cy="300" r="34"/>
+    <circle cx="80" cy="360" r="14"/>
+  </g>
+  <g fill="#000000" fill-opacity="0.40">
+    <circle cx="300" cy="455" r="92"/>
+    <path d="M96 900 C 112 706 206 640 300 640 C 394 640 488 706 504 900 Z"/>
+  </g>
+  <circle cx="300" cy="455" r="92" fill="none" stroke="#ffffff" stroke-opacity="0.10" stroke-width="2"/>
   <rect width="600" height="900" fill="url(#shade)"/>
-  <text x="300" y="500" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="320" fill="#ffffff" fill-opacity="0.14">T</text>
-  <text x="300" y="752" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="44" letter-spacing="7" fill="#ffffff" fill-opacity="0.93">TANYA</text>
-  <text x="300" y="800" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="19" letter-spacing="5" fill="#ffffff" fill-opacity="0.55">THRILLER</text>
+  <rect width="600" height="900" fill="url(#vignette)"/>
+  <rect width="600" height="900" filter="url(#grain)" opacity="0.18"/>
+  <text x="300" y="748" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="44" letter-spacing="7" fill="#ffffff" fill-opacity="0.93">TANYA</text>
+  <text x="300" y="796" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="19" letter-spacing="5" fill="#ffffff" fill-opacity="0.55">THRILLER</text>
 </svg>

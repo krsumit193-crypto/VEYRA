@@ -62,7 +62,12 @@ public class StoryCatalog {
     public synchronized List<Story> getAll() {
 
         List<Story> all = new ArrayList<>(generated.values());
-        all.addAll(bundled.values());
+
+        for (Map.Entry<String, Story> entry : bundled.entrySet()) {
+            if (!generated.containsKey(entry.getKey())) {
+                all.add(entry.getValue());
+            }
+        }
 
         return all;
     }

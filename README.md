@@ -135,6 +135,10 @@ Returns the public story catalog used by the frontend. Persona, setting and scen
 
 Manual trigger for the daily generator. Requires `X-Veyra-Admin: <token>` matching `veyra.admin.token`; returns `403` when no token is configured.
 
+### `POST /stories/avatars`
+
+Regenerates portraits for every story that still uses a bundled placeholder. Same admin token. Use it once after adding an image key to fill the whole catalog with generated portraits.
+
 ### `POST /chat`
 
 ```json
