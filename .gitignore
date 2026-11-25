@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### VEYRA ###
+error.txt
+backend/__pycache__/
+*.pyc
+__pycache__/

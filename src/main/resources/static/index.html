@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Veyra</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body id="top">
+
+    <!-- ================= NAVBAR ================= -->
+
+    <nav>
+
+        <h1>Veyra</h1>
+
+        <a href="#top">Home</a>
+        <a href="#stories">Stories</a>
+        <a href="#about">About</a>
+
+    </nav>
+
+
+    <main>
+
+
+        <!-- ================= HERO ================= -->
+
+        <section class="hero">
+
+            <h2>Meet someone who remembers</h2>
+
+            <p>
+                Stories, conversations, and companions that feel a little more real.
+            </p>
+
+            <button id="exploreBtn">
+                Explore Stories
+            </button>
+
+        </section>
+
+
+
+        <!-- ================= STORIES ================= -->
+
+        <section id="stories">
+
+            <h2>Stories for you</h2>
+
+            <p>
+                Step into a story and make it your own.
+            </p>
+
+
+            <div id="storySections"></div>
+
+        </section>
+
+
+
+        <!-- ================= CREATE STORY ================= -->
+
+        <section class="custom-story">
+
+            <h2>Create your own story</h2>
+
+            <p>
+                Tell Veyra the world, the characters, and the situation.
+                Your AI companion will bring the story to life.
+            </p>
+
+            <button id="createStoryBtn">
+                Create a Story
+            </button>
+
+        </section>
+
+
+
+        <!-- ================= ABOUT ================= -->
+
+        <section id="about">
+
+            <h2>About VEYRA</h2>
+
+            <p>
+                VEYRA is an AI story-chat app. Pick a world, step into the scene,
+                and talk to a character who remembers what you said.
+            </p>
+
+            <ul>
+                <li>Twelve story worlds, each with its own character and voice.</li>
+                <li>English, Hindi and Hinglish replies.</li>
+                <li>Chats are saved on your device.</li>
+            </ul>
+
+        </section>
+
+
+
+        <!-- ================= CHAT SCREEN ================= -->
+
+        <section class="chat-screen" id="chatScreen">
+
+
+            <!-- CHAT HEADER -->
+
+            <div class="chat-header">
+
+
+                <!-- BACK -->
+
+                <button
+                    id="backBtn"
+                    class="back-btn"
+                >
+                    ←
+                </button>
+
+
+
+                <!-- CHARACTER -->
+
+                <div class="chat-user">
+
+
+                    <!-- Avatar will be added dynamically later -->
+
+                    <div class="chat-avatar"></div>
+
+
+                    <div>
+
+                        <h2>Her</h2>
+
+                        <p>
+                            Online
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- CHAT ACTIONS -->
+
+                <div class="chat-actions">
+
+
+                    <!-- LANGUAGE -->
+
+                    <select id="languageSelect">
+
+                        <option value="en">
+                            English
+                        </option>
+
+                        <option value="hi">
+                            Hindi
+                        </option>
+
+                        <option value="hin" selected>
+                            Hinglish
+                        </option>
+
+                    </select>
+
+
+
+                    <!-- SEARCH -->
+
+                    <button
+                        class="header-action"
+                        title="Search"
+                    >
+                        🔍
+                    </button>
+
+
+
+                    <!-- MORE -->
+
+                   <button
+    id="moreBtn"
+    class="header-action"
+    title="More"
+>
+    ⋮
+</button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ================= CHAT MESSAGES ================= -->
+
+            <div class="chat-messages">
+
+
+                <div class="chat-date">
+                    Today
+                </div>
+
+
+                <div class="message ai-message">
+                    finally tumne mujhe notice kia.
+                </div>
+
+
+            </div>
+
+
+
+            <!-- ================= CHAT INPUT ================= -->
+
+            <div class="chat-input">
+
+
+                <!-- EMOJI -->
+
+                <button
+                    class="input-icon"
+                    title="Emoji"
+                >
+                    😊
+                </button>
+
+
+
+                <!-- MESSAGE -->
+
+                <input
+                    type="text"
+                    id="messageInput"
+                    placeholder="Type a message..."
+                >
+
+
+
+                <!-- SEND -->
+
+                <button
+                    id="sendBtn"
+                    class="send-btn"
+                    title="Send"
+                >
+                    ➤
+                </button>
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- ================= JAVASCRIPT ================= -->
+
+    <script src="script.js"></script>
+
+
+</body>
+
+</html>

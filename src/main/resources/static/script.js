@@ -3,6 +3,16 @@
    ===================================================== */
 
 /* =====================================================
+   CONFIG
+   ===================================================== */
+
+const API_BASE =
+    window.VEYRA_API_BASE ||
+    (location.protocol === "file:"
+        ? "http://localhost:8080"
+        : "");
+
+/* =====================================================
    EXPLORE STORIES
    ===================================================== */
 
@@ -121,146 +131,54 @@ const moreBtn =
 
 let currentStoryId = null;
 let isWaitingForAI = false;
+let pendingMessage = "";
+let pendingHistory = [];
 
 /* =====================================================
    STORY DATA
    ===================================================== */
 
-const storiesData = {
+const storiesData = {};
 
-    story1: {
-
-        title:
-            "The Girl in Seat 27",
-
-        avatar:
-            "images/seat27.png",
-
-        background:
-            "images/seat27.png",
-
-        backgroundClass:
-            "bg-seat27",
-
-        message:
-            "finally tumne mujhe notice kia.",
-
-        status:
-            "Online"
-
+const SECTION_DEFS = [
+    {
+        title: "Top 5",
+        filter: story => story.featuredRank != null,
+        sort: (a, b) => a.featuredRank - b.featuredRank,
+        limit: 5
     },
-
-    story2: {
-
-        title:
-            "3:17 AM",
-
-        avatar:
-            "images/317am.png",
-
-        background:
-            "images/317am.png",
-
-        backgroundClass:
-            "bg-317",
-
-        message:
-            "It's 3:17 AM... abhi tak jaag rhe ho?",
-
-        status:
-            "Online"
-
+    {
+        title: "Romance",
+        filter: story => hasGenre(story, "Romance")
     },
-
-    story3: {
-
-        title:
-            "My Fake Girlfriend",
-
-        avatar:
-            "images/fakegirlfriend.png",
-
-        background:
-            "images/fakegirlfriend.png",
-
-        backgroundClass:
-            "bg-fake",
-
-        message:
-            "yaad hai na humdono sirf natak kar rhe... right?",
-
-        status:
-            "Online"
-
+    {
+        title: "Comedy",
+        filter: story => hasGenre(story, "Comedy")
     },
-
-    story4: {
-
-        title:
-            "The Rival Next Door",
-
-        avatar:
-            "images/nextdoor.png",
-
-        background:
-            "images/nextdoor.png",
-
-        backgroundClass:
-            "bg-rival",
-
-        message:
-            "tumhe lagta h tum mujhse jeet jaoge?",
-
-        status:
-            "Online"
-
+    {
+        title: "Mystery",
+        filter: story => hasGenre(story, "Mystery")
     },
-
-    story5: {
-
-        title:
-            "She Remembers Everything",
-
-        avatar:
-            "images/remembers.png",
-
-        background:
-            "images/remembers.png",
-
-        backgroundClass:
-            "bg-remembers",
-
-        message:
-            "bhale hi tum bhul gye hoge kya hua tha... mujhe abtk sab yad h",
-
-        status:
-            "Online"
-
+    {
+        title: "Drama",
+        filter: story => hasGenre(story, "Drama")
     },
-
-    story6: {
-
-        title:
-            "One Summer, One Secret",
-
-        avatar:
-            "images/summersecret.png",
-
-        background:
-            "images/summersecret.png",
-
-        backgroundClass:
-            "bg-summer",
-
-        message:
-            "yad h last summer kya promise kia tha?",
-
-        status:
-            "Online"
-
+    {
+        title: "Late Night",
+        filter: story => hasGenre(story, "Late Night")
+    },
+    {
+        title: "All Stories",
+        filter: () => true
     }
+];
 
-};
+function hasGenre(story, genre) {
+
+    return Array.isArray(story.genres) &&
+        story.genres.includes(genre);
+
+}
 
 /* =====================================================
    CHAT HISTORY — LOCAL STORAGE
@@ -572,6 +490,170 @@ function renderChatHistory() {
 }
 
 /* =====================================================
+   LOAD STORIES FROM BACKEND
+   ===================================================== */
+
+async function loadStories() {
+
+    const container =
+        document.getElementById("storySections");
+
+    if (!container) {
+        return;
+    }
+
+    try {
+
+        const response =
+            await fetch(`${API_BASE}/stories`);
+
+        if (!response.ok) {
+            throw new Error(
+                "Stories request failed: " +
+                response.status
+            );
+        }
+
+        const stories =
+            await response.json();
+
+        stories.forEach(story => {
+            storiesData[story.id] = story;
+        });
+
+        renderStorySections(stories, container);
+
+    } catch (error) {
+
+        console.error(
+            "VEYRA: Could not load stories.",
+            error
+        );
+
+        container.innerHTML = `
+            <p class="stories-error">
+                Stories load nahi ho paayi. Backend chalu hai?
+            </p>
+        `;
+
+    }
+
+}
+
+/* =====================================================
+   RENDER STORY SECTIONS
+   ===================================================== */
+
+function renderStorySections(stories, container) {
+
+    container.innerHTML = "";
+
+    SECTION_DEFS.forEach(section => {
+
+        let matches =
+            stories.filter(section.filter);
+
+        if (section.sort) {
+            matches = matches.slice().sort(section.sort);
+        }
+
+        if (section.limit) {
+            matches = matches.slice(0, section.limit);
+        }
+
+        if (matches.length === 0) {
+            return;
+        }
+
+        const block =
+            document.createElement("section");
+
+        block.className = "story-section";
+
+        const heading =
+            document.createElement("h2");
+
+        heading.textContent = section.title;
+
+        block.appendChild(heading);
+
+        const row =
+            document.createElement("div");
+
+        row.className = "story-row";
+
+        matches.forEach(story => {
+            row.appendChild(createStoryCard(story));
+        });
+
+        block.appendChild(row);
+        container.appendChild(block);
+
+    });
+
+}
+
+/* =====================================================
+   CREATE STORY CARD
+   ===================================================== */
+
+function createStoryCard(story) {
+
+    const card =
+        document.createElement("article");
+
+    card.className = "story-card";
+    card.dataset.storyId = story.id;
+    card.tabIndex = 0;
+
+    const image =
+        document.createElement("img");
+
+    image.src =
+        story.avatar || "images/seat27.png";
+    image.alt =
+        story.title || "Story";
+    image.loading = "lazy";
+
+    card.appendChild(image);
+
+    const info =
+        document.createElement("div");
+
+    info.className = "story-info";
+
+    const title =
+        document.createElement("h3");
+
+    title.textContent =
+        story.title || "Untitled";
+
+    info.appendChild(title);
+
+    const genres =
+        document.createElement("p");
+
+    genres.className = "genre";
+    genres.textContent =
+        (story.genres || []).join(" · ");
+
+    info.appendChild(genres);
+
+    const hook =
+        document.createElement("p");
+
+    hook.className = "hook";
+    hook.textContent =
+        story.hook || "";
+
+    info.appendChild(hook);
+    card.appendChild(info);
+
+    return card;
+
+}
+
+/* =====================================================
    OPEN STORY
    ===================================================== */
 
@@ -646,7 +728,7 @@ function openStory(storyId) {
                     "ai",
 
                 text:
-                    story.message,
+                    story.openingMessage,
 
                 time:
                     getCurrentTime()
@@ -689,22 +771,48 @@ function openStory(storyId) {
    STORY CARD EVENTS
    ===================================================== */
 
-document
-    .querySelectorAll(".story-card")
-    .forEach(card => {
+const storySections =
+    document.getElementById("storySections");
 
-        card.addEventListener(
-            "click",
-            () => {
+if (storySections) {
 
-                openStory(
-                    card.id
-                );
+    storySections.addEventListener(
+        "click",
+        event => {
 
+            const card =
+                event.target.closest(".story-card");
+
+            if (card && card.dataset.storyId) {
+                openStory(card.dataset.storyId);
             }
-        );
 
-    });
+        }
+    );
+
+    storySections.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key !== "Enter" &&
+                event.key !== " "
+            ) {
+                return;
+            }
+
+            const card =
+                event.target.closest(".story-card");
+
+            if (card && card.dataset.storyId) {
+                event.preventDefault();
+                openStory(card.dataset.storyId);
+            }
+
+        }
+    );
+
+}
 
 /* =====================================================
    BACK BUTTON
@@ -798,149 +906,8 @@ function showTypingIndicator() {
 }
 
 /* =====================================================
-   DEMO AI RESPONSE
+   AI RESPONSE
    ===================================================== */
-
-        function generateSmartReply(userText, storyId, language) {
-    const text = userText.toLowerCase().trim();
-
-    const replies = {
-        story1: {
-            en: {
-                hello: "Hey... took you long enough to say hello 👀",
-                who: "Maybe I'm the girl from seat 27... maybe I'm not.",
-                seat: "Seat 27 has a story. You sure you want to hear it?",
-                default: "Hmm... you really are curious, aren't you?"
-            },
-            hi: {
-                hello: "हेलो... आखिर तुमने मुझसे बात कर ही ली 👀",
-                who: "शायद मैं seat 27 वाली लड़की हूँ... शायद नहीं।",
-                seat: "Seat 27 की एक कहानी है। सच में सुनना चाहते हो?",
-                default: "हम्म... तुम काफी curious हो, है ना?"
-            },
-            hin: {
-                hello: "Hey... finally tumne hello bol hi diya 👀",
-                who: "Maybe main seat 27 wali girl hoon... maybe nahi.",
-                seat: "Seat 27 ki ek story hai. Sach mein sunna hai?",
-                default: "Hmm... tum kaafi curious ho, hai na?"
-            }
-        },
-
-        story2: {
-            en: {
-                hello: "3:17 AM and you're saying hello? Interesting.",
-                who: "Someone who knows you're still awake.",
-                default: "It's late... maybe we shouldn't be talking. Or maybe we should."
-            },
-            hi: {
-                hello: "3:17 AM पर hello? Interesting.",
-                who: "कोई ऐसा जो जानता है कि तुम अभी भी जाग रहे हो।",
-                default: "बहुत देर हो चुकी है... शायद हमें बात नहीं करनी चाहिए। या शायद करनी चाहिए।"
-            },
-            hin: {
-                hello: "3:17 AM pe hello? Interesting 👀",
-                who: "Koi aisa jo jaanta hai tum abhi bhi jaag rahe ho.",
-                default: "Bahut late ho gaya hai... shayad hume baat nahi karni chahiye. Ya shayad karni chahiye."
-            }
-        },
-
-        story3: {
-            en: {
-                hello: "Hey... remember, we're supposed to be pretending 😏",
-                who: "Your fake girlfriend. Don't tell me you forgot already.",
-                default: "Careful... you're making this feel less fake."
-            },
-            hi: {
-                hello: "Hey... याद है ना, हमें pretend करना है 😏",
-                who: "तुम्हारी fake girlfriend. इतनी जल्दी भूल गए?",
-                default: "संभलकर... तुम इसे थोड़ा कम fake बना रहे हो।"
-            },
-            hin: {
-                hello: "Hey... yaad hai na, hume pretend karna hai 😏",
-                who: "Tumhari fake girlfriend. Itni jaldi bhool gaye?",
-                default: "Careful... tum ise thoda kam fake bana rahe ho."
-            }
-        },
-
-        story4: {
-            en: {
-                hello: "Hello, rival. Ready to lose? 😏",
-                default: "You talk confidently... let's see if you can back it up."
-            },
-            hi: {
-                hello: "Hello, rival. हारने के लिए ready हो? 😏",
-                default: "बातें तो बहुत confidence से करते हो... देखते हैं करके भी दिखा पाते हो या नहीं।"
-            },
-            hin: {
-                hello: "Hello rival. Haarne ke liye ready ho? 😏",
-                default: "Baatein toh confidence se karte ho... dekhte hain karke bhi dikha paate ho ya nahi."
-            }
-        },
-
-        story5: {
-            en: {
-                hello: "I remember that hello too.",
-                who: "Someone who remembers more than you think.",
-                default: "You really don't remember what happened, do you?"
-            },
-            hi: {
-                hello: "मुझे वो hello भी याद है।",
-                who: "कोई ऐसा जिसे तुम्हारे सोचने से ज्यादा याद है।",
-                default: "तुम्हें सच में याद नहीं है कि क्या हुआ था, है ना?"
-            },
-            hin: {
-                hello: "Mujhe woh hello bhi yaad hai.",
-                who: "Koi aisa jise tumhare sochne se zyada yaad hai.",
-                default: "Tumhe sach mein yaad nahi hai kya hua tha, hai na?"
-            }
-        },
-
-        story6: {
-            en: {
-                hello: "Hey... it's been a while.",
-                default: "That summer feels like yesterday, doesn't it?"
-            },
-            hi: {
-                hello: "Hey... काफी समय हो गया।",
-                default: "वो summer ऐसा लगता है जैसे कल की ही बात हो, है ना?"
-            },
-            hin: {
-                hello: "Hey... kaafi time ho gaya.",
-                default: "Woh summer aisa lagta hai jaise kal ki hi baat ho, hai na?"
-            }
-        }
-    };
-
-    const story = replies[storyId];
-
-    if (!story) {
-        return "Hmm... interesting 👀";
-    }
-
-    const lang = story[language] || story.hin;
-
-    if (
-        text.includes("hello") ||
-        text.includes("hi") ||
-        text.includes("hey")
-    ) {
-        return lang.hello;
-    }
-
-    if (
-        text.includes("who") ||
-        text.includes("kaun") ||
-        text.includes("kon")
-    ) {
-        return lang.who || lang.default;
-    }
-
-    if (text.includes("seat")) {
-        return lang.seat || lang.default;
-    }
-
-    return lang.default;
-}
 
 async function sendDemoAIResponse() {
 
@@ -962,7 +929,7 @@ if (sendBtn) {
 
         const response =
             await fetch(
-                "http://localhost:8080/chat",
+                `${API_BASE}/chat`,
                 {
                     method: "POST",
 
@@ -971,14 +938,16 @@ if (sendBtn) {
                             "application/json"
                     },
 
-                   body: JSON.stringify({
-    message: window.lastUserMessage || "",
-    story: story.title,
-history: getChatHistory(currentStoryId).filter(
-    message => message.type !== "user" ||
-        message.text !== window.lastUserMessage
-)
-                   })
+                    body: JSON.stringify({
+                        message: pendingMessage,
+                        story: story.title,
+                        storyId: currentStoryId,
+                        language:
+                            languageSelect
+                                ? languageSelect.value
+                                : "hin",
+                        history: pendingHistory
+                    })
                 }
             );
 
@@ -1094,6 +1063,7 @@ retryButton.textContent = "Retry";
 retryButton.className = "retry-button";
 
 retryButton.addEventListener("click", () => {
+    retryButton.remove();
     errorMessage.remove();
     sendDemoAIResponse();
 });
@@ -1110,14 +1080,6 @@ finally {
     if (sendBtn) {
         sendBtn.disabled = false;
     }
-    if (messageInput) {
-    messageInput.addEventListener("keydown", (event) => {
-        if (event.key === "Enter" && !event.shiftKey) {
-            event.preventDefault();
-            sendMessage();
-        }
-    });
-}
 }
 }
 /* =====================================================
@@ -1140,7 +1102,10 @@ function sendMessage() {
     const messageText =
         messageInput.value.trim();
 
-        window.lastUserMessage = messageText;
+    pendingMessage = messageText;
+
+    pendingHistory =
+        getChatHistory(currentStoryId);
 
     /* EMPTY */
 
@@ -1346,7 +1311,7 @@ function clearCurrentChat() {
                     "ai",
 
                 text:
-                    story.message,
+                    story.openingMessage,
 
                 time:
                     getCurrentTime()
@@ -1495,4 +1460,10 @@ if (emojiBtn && messageInput) {
     );
 
 }
+
+/* =====================================================
+   INIT
+   ===================================================== */
+
+loadStories();
 
