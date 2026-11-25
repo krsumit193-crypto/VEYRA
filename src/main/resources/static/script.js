@@ -140,43 +140,47 @@ let pendingHistory = [];
 
 const storiesData = {};
 
-const SECTION_DEFS = [
-    {
-        title: "Top 5",
-        filter: story => story.featuredRank != null,
-        sort: (a, b) => a.featuredRank - b.featuredRank,
-        limit: 5
-    },
-    {
-        title: "Romance",
-        filter: story => hasGenre(story, "Romance")
-    },
-    {
-        title: "Comedy",
-        filter: story => hasGenre(story, "Comedy")
-    },
-    {
-        title: "Mystery",
-        filter: story => hasGenre(story, "Mystery")
-    },
-    {
-        title: "Drama",
-        filter: story => hasGenre(story, "Drama")
-    },
-    {
-        title: "Late Night",
-        filter: story => hasGenre(story, "Late Night")
-    },
-    {
-        title: "All Stories",
-        filter: () => true
-    }
+const SECTION_ORDER = [
+    "Top 5",
+    "Romance",
+    "Mystery",
+    "Drama",
+    "Thriller",
+    "Late Night"
 ];
 
-function hasGenre(story, genre) {
+function groupStoriesBySection(stories) {
 
-    return Array.isArray(story.genres) &&
-        story.genres.includes(genre);
+    const groups = new Map();
+
+    SECTION_ORDER.forEach(title => {
+        groups.set(title, []);
+    });
+
+    stories.forEach(story => {
+
+        const title =
+            story.section || "More";
+
+        if (!groups.has(title)) {
+            groups.set(title, []);
+        }
+
+        groups.get(title).push(story);
+
+    });
+
+    const top = groups.get("Top 5");
+
+    if (top) {
+        top.sort(
+            (a, b) =>
+                (a.featuredRank || 99) -
+                (b.featuredRank || 99)
+        );
+    }
+
+    return groups;
 
 }
 
@@ -548,18 +552,10 @@ function renderStorySections(stories, container) {
 
     container.innerHTML = "";
 
-    SECTION_DEFS.forEach(section => {
+    const groups =
+        groupStoriesBySection(stories);
 
-        let matches =
-            stories.filter(section.filter);
-
-        if (section.sort) {
-            matches = matches.slice().sort(section.sort);
-        }
-
-        if (section.limit) {
-            matches = matches.slice(0, section.limit);
-        }
+    groups.forEach((matches, title) => {
 
         if (matches.length === 0) {
             return;
@@ -573,7 +569,7 @@ function renderStorySections(stories, container) {
         const heading =
             document.createElement("h2");
 
-        heading.textContent = section.title;
+        heading.textContent = title;
 
         block.appendChild(heading);
 

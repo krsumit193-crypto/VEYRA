@@ -6,6 +6,7 @@ public class Story {
 
     private String id;
     private String title;
+    private String section;
     private List<String> genres;
     private Integer featuredRank;
     private String avatar;
@@ -13,6 +14,8 @@ public class Story {
     private String openingMessage;
     private String status;
     private String backgroundClass;
+    private String look;
+    private String createdOn;
     private Persona character;
     private String setting;
     private String scenario;
@@ -32,6 +35,14 @@ public class Story {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getSection() {
+        return section;
+    }
+
+    public void setSection(String section) {
+        this.section = section;
     }
 
     public List<String> getGenres() {
@@ -88,6 +99,22 @@ public class Story {
 
     public void setBackgroundClass(String backgroundClass) {
         this.backgroundClass = backgroundClass;
+    }
+
+    public String getLook() {
+        return look;
+    }
+
+    public void setLook(String look) {
+        this.look = look;
+    }
+
+    public String getCreatedOn() {
+        return createdOn;
+    }
+
+    public void setCreatedOn(String createdOn) {
+        this.createdOn = createdOn;
     }
 
     public Persona getCharacter() {

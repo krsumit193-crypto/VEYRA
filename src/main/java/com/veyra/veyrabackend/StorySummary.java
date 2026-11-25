@@ -5,6 +5,7 @@ import java.util.List;
 public record StorySummary(
         String id,
         String title,
+        String section,
         List<String> genres,
         Integer featuredRank,
         String avatar,
@@ -18,6 +19,7 @@ public record StorySummary(
         return new StorySummary(
                 story.getId(),
                 story.getTitle(),
+                story.getSection(),
                 story.getGenres(),
                 story.getFeaturedRank(),
                 story.getAvatar(),

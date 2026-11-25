@@ -34,7 +34,8 @@ class ChatServiceTest {
         assertNotNull(story);
         assertEquals("The Girl in Seat 27", story.getTitle());
         assertEquals("Meera", story.getCharacter().getName());
-        assertEquals(12, catalog.getAll().size());
+        assertEquals(18, catalog.getAll().size());
+        assertEquals("Top 5", story.getSection());
         assertEquals(List.of("Mystery", "Romance", "Drama"), story.getGenres());
         assertEquals(1, story.getFeaturedRank());
     }

@@ -37,3 +37,6 @@ error.txt
 backend/__pycache__/
 *.pyc
 __pycache__/
+
+# Daily generated stories and avatars
+data/

@@ -11,8 +11,9 @@ It is a single Spring Boot app: the Java backend serves the frontend, exposes th
 ## ✨ Features
 
 - 💬 AI-powered roleplay chat with per-story characters
-- 🎭 12 story worlds, each with its own persona, setting and scenario
-- 🗂️ Auto-generated sections: **Top 5**, **Romance**, **Comedy**, **Mystery**, **Drama**, **Late Night**
+- 🎭 18 story worlds, each with its own persona, setting and scenario
+- 🗂️ Sections: **Top 5**, **Romance**, **Mystery**, **Drama**, **Thriller**, **Late Night** — every story belongs to exactly one section
+- 🌙 One brand-new persona, with its own generated portrait, added automatically every day at 11 PM IST
 - 🌐 English, Hindi & Hinglish replies (language selector in the chat header)
 - 😊 Emoji picker
 - ⏱️ Message timestamps and ✓✓ read indicators
@@ -38,15 +39,22 @@ pom.xml
 src/main/java/com/veyra/veyrabackend/
   ChatController.java     POST /chat
   ChatService.java        prompt building + OpenRouter call + response parsing
-  StoryController.java    GET /stories
-  StoryCatalog.java       loads stories.json
+  StoryController.java    GET /stories, POST /stories/daily
+  StoryCatalog.java       bundled catalog + generated stories from data/
   Story.java              story + persona model
+  StorySummary.java       public shape returned by GET /stories
   Persona.java
-  WebConfig.java          CORS for local dev
+  DailyStoryJob.java      scheduler: one new persona every day at 11 PM
+  DailyStoryService.java  writes the new persona with the LLM
+  AvatarService.java      generates the portrait (SVG fallback)
+  WebConfig.java          CORS + serves generated images
 src/main/resources/
   application.properties  config
-  stories.json            single source of truth for stories and personas
+  stories.json            bundled story catalog (source of truth)
   static/                 index.html, script.js, style.css, images/
+data/                     created at runtime (gitignored)
+  stories.json            daily generated stories
+  images/                 daily generated portraits
 ```
 
 ---
@@ -88,8 +96,15 @@ The frontend is served by Spring Boot, so there is nothing else to start.
 |---|---|---|
 | `openrouter.api.key` | `OPENROUTER_API_KEY` | empty |
 | `openrouter.model` | `OPENROUTER_MODEL` | `openrouter/free` |
+| `openrouter.image.model` | `OPENROUTER_IMAGE_MODEL` | `google/gemini-2.5-flash-image-preview` |
+| `veyra.daily.cron` | `VEYRA_DAILY_CRON` | `0 0 23 * * *` (11 PM) |
+| `veyra.daily.zone` | `VEYRA_DAILY_ZONE` | `Asia/Kolkata` |
+| `veyra.data.dir` | `VEYRA_DATA_DIR` | `data` |
+| `veyra.admin.token` | `VEYRA_ADMIN_TOKEN` | empty (manual trigger disabled) |
 
 `openrouter/free` is rate-limited. If replies fail often, set `OPENROUTER_MODEL` to a paid/less busy model.
+
+Image generation needs a model that returns images (the default does). If it fails, VEYRA writes a local SVG portrait instead, so a story is never left without a picture.
 
 ---
 
@@ -104,6 +119,7 @@ Returns the public story catalog used by the frontend. Persona, setting and scen
   {
     "id": "story1",
     "title": "The Girl in Seat 27",
+    "section": "Top 5",
     "genres": ["Mystery", "Romance", "Drama"],
     "featuredRank": 1,
     "avatar": "images/seat27.png",
@@ -114,6 +130,10 @@ Returns the public story catalog used by the frontend. Persona, setting and scen
   }
 ]
 ```
+
+### `POST /stories/daily`
+
+Manual trigger for the daily generator. Requires `X-Veyra-Admin: <token>` matching `veyra.admin.token`; returns `403` when no token is configured.
 
 ### `POST /chat`
 
@@ -141,19 +161,34 @@ Response:
 
 ---
 
-## ➕ Adding a new persona (daily workflow)
+## 🌙 Daily personas (automatic)
 
-Everything is driven by one file: **`src/main/resources/stories.json`**.
+Every day at **11:00 PM IST** `DailyStoryJob` runs:
 
-1. Add a new entry under `"stories"` (for example `"story13"`).
+1. `DailyStoryService` asks the LLM for one new original story world (title, hook, opening line, persona, setting, scenario, and a one-line look description).
+2. It puts the story in the section with the fewest stories (**Romance**, **Mystery**, **Drama**, **Thriller** or **Late Night**).
+3. `AvatarService` generates a portrait and stores it in `data/images/`. If image generation fails, it writes an SVG portrait instead.
+4. The story is saved to `data/stories.json` and appears on the site immediately.
+
+If the app was closed at 11 PM, the next start after 11 PM catches up and generates that day's story. Change the schedule with `VEYRA_DAILY_CRON` and `VEYRA_DAILY_ZONE`.
+
+---
+
+## ➕ Adding a persona by hand
+
+Bundled stories live in **`src/main/resources/stories.json`**. Generated ones go to `data/stories.json` and are merged on top.
+
+1. Add a new entry under `"stories"` (for example `"story19"`).
 2. Fill in:
    - `id`, `title`
-   - `genres` — any of `Romance`, `Comedy`, `Mystery`, `Drama`, `Late Night`, `Emotional`
-   - `featuredRank` — `1`–`5` to appear in **Top 5**, or `null`
+   - `section` — one of `Top 5`, `Romance`, `Mystery`, `Drama`, `Thriller`, `Late Night`
+   - `genres` — free-form tags shown on the card
+   - `featuredRank` — `1`–`5` for **Top 5**, otherwise `null`
    - `avatar` — path under `static/images/`
    - `hook` — one line for the card
    - `openingMessage` — first chat bubble
    - `status` — usually `"Online"`
+   - `backgroundClass` — one of `bg-seat27`, `bg-317`, `bg-fake`, `bg-rival`, `bg-remembers`, `bg-summer`
    - `character` — `name`, `age`, `gender`, `personality`, `backstory`, `speechStyle`, `boundaries`
    - `setting`, `scenario`, `openingBeat`
 3. Drop the avatar image into `src/main/resources/static/images/`.
@@ -162,7 +197,7 @@ Everything is driven by one file: **`src/main/resources/stories.json`**.
 That is it:
 
 - The frontend loads `GET /stories` and renders the card automatically.
-- Sections are generated from `genres` and `featuredRank`, so a new Romance story appears under **Romance** without touching HTML.
+- A story appears only in the section named by its `section` field, so no story is repeated across sections.
 - The chat prompt automatically receives the new persona, setting and scenario.
 
 No frontend or Java changes are needed for a new persona.
@@ -173,4 +208,5 @@ No frontend or Java changes are needed for a new persona.
 
 - Chat history lives in the browser (`localStorage`, key `veyra_chat_<storyId>`). There is no database.
 - The "More" (⋮) button clears the current conversation.
+- `data/` is gitignored: generated stories and portraits are runtime content, not source.
 - The Python/FastAPI prototype is no longer part of this repository. The Java backend is the only backend.
