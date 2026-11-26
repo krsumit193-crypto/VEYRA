@@ -68,11 +68,23 @@ public class DailyStoryService {
     }
 
     /**
-     * Generates, illustrates and stores one new story.
+     * Generates, illustrates and stores one new story for today.
      *
      * @return the stored story
      */
     public synchronized Story generate() {
+        return generateFor(LocalDate.now(zone));
+    }
+
+    /**
+     * Generates a story for a specific date. Used when the app was offline at
+     * 11 PM and has to catch up on days it missed.
+     */
+    public synchronized Story generateFor(LocalDate date) {
+
+        if (date == null) {
+            throw new IllegalArgumentException("A story date is required.");
+        }
 
         if (apiKey == null || apiKey.isBlank()) {
             throw new IllegalStateException(
@@ -109,7 +121,7 @@ public class DailyStoryService {
         story.setStatus("Online");
         story.setFeaturedRank(null);
         story.setBackgroundClass(backgroundFor(story.getSection()));
-        story.setCreatedOn(LocalDate.now(zone).toString());
+        story.setCreatedOn(date.toString());
         story.setAvatar(avatarService.generate(story));
 
         catalog.saveGenerated(story);

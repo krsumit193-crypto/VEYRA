@@ -180,6 +180,17 @@ function groupStoriesBySection(stories) {
         );
     }
 
+    /* Today's new persona goes first, without leaving its own section. */
+    groups.forEach((matches, title) => {
+        if (title !== "Top 5") {
+            matches.sort(
+                (a, b) =>
+                    (b.newToday ? 1 : 0) -
+                    (a.newToday ? 1 : 0)
+            );
+        }
+    });
+
     return groups;
 
 }
@@ -623,6 +634,18 @@ function createStoryCard(story) {
 
     title.textContent =
         story.title || "Untitled";
+
+    if (story.newToday) {
+
+        const badge =
+            document.createElement("span");
+
+        badge.className = "new-badge";
+        badge.textContent = "NEW TODAY";
+
+        title.appendChild(badge);
+
+    }
 
     info.appendChild(title);
 

@@ -3,6 +3,8 @@ package com.veyra.veyrabackend;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -142,6 +144,33 @@ public class StoryCatalog {
         }
 
         return false;
+    }
+
+    /** Newest date a generated story was created for, or {@code null} if none. */
+    public synchronized LocalDate latestGeneratedDate() {
+
+        LocalDate latest = null;
+
+        for (Story story : generated.values()) {
+            String value = story.getCreatedOn();
+
+            if (value == null || value.isBlank()) {
+                continue;
+            }
+
+            try {
+                LocalDate date = LocalDate.parse(value.trim());
+
+                if (latest == null || date.isAfter(latest)) {
+                    latest = date;
+                }
+
+            } catch (DateTimeParseException ignored) {
+                // Old or hand-edited data with an unknown date is simply skipped.
+            }
+        }
+
+        return latest;
     }
 
     public synchronized void saveGenerated(Story story) {

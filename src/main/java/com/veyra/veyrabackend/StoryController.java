@@ -1,5 +1,7 @@
 package com.veyra.veyrabackend;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +20,7 @@ public class StoryController {
     private final StoryCatalog storyCatalog;
     private final DailyStoryService dailyStoryService;
     private final AvatarService avatarService;
+    private final ZoneId zone;
 
     @Value("${veyra.admin.token:}")
     private String adminToken;
@@ -25,18 +28,22 @@ public class StoryController {
     public StoryController(
             StoryCatalog storyCatalog,
             DailyStoryService dailyStoryService,
-            AvatarService avatarService
+            AvatarService avatarService,
+            @Value("${veyra.daily.zone:Asia/Kolkata}") String zoneId
     ) {
         this.storyCatalog = storyCatalog;
         this.dailyStoryService = dailyStoryService;
         this.avatarService = avatarService;
+        this.zone = ZoneId.of(zoneId);
     }
 
     @GetMapping
     public List<StorySummary> all() {
+        String today = today();
+
         return storyCatalog.getAll()
                 .stream()
-                .map(StorySummary::from)
+                .map(story -> StorySummary.from(story, today))
                 .toList();
     }
 
@@ -52,7 +59,7 @@ public class StoryController {
 
         requireAdmin(token);
 
-        return StorySummary.from(dailyStoryService.generate());
+        return StorySummary.from(dailyStoryService.generate(), today());
     }
 
     /**
@@ -74,8 +81,12 @@ public class StoryController {
                     story.setAvatar(avatarService.generate(story));
                     storyCatalog.saveGenerated(story);
                 })
-                .map(StorySummary::from)
+                .map(story -> StorySummary.from(story, today()))
                 .toList();
+    }
+
+    private String today() {
+        return LocalDate.now(zone).toString();
     }
 
     private boolean needsAvatar(Story story) {

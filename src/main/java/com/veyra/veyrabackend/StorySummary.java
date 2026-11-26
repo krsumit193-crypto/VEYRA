@@ -12,10 +12,21 @@ public record StorySummary(
         String hook,
         String openingMessage,
         String status,
-        String backgroundClass
+        String backgroundClass,
+        String createdOn,
+        boolean newToday
 ) {
 
     public static StorySummary from(Story story) {
+        return from(story, null);
+    }
+
+    /**
+     * @param today today's date in the configured daily zone, or {@code null}
+     *              when the caller does not need the new-arrival flag
+     */
+    public static StorySummary from(Story story, String today) {
+
         return new StorySummary(
                 story.getId(),
                 story.getTitle(),
@@ -26,7 +37,9 @@ public record StorySummary(
                 story.getHook(),
                 story.getOpeningMessage(),
                 story.getStatus(),
-                story.getBackgroundClass()
+                story.getBackgroundClass(),
+                story.getCreatedOn(),
+                today != null && today.equals(story.getCreatedOn())
         );
     }
 }

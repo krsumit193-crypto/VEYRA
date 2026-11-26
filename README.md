@@ -126,10 +126,16 @@ Returns the public story catalog used by the frontend. Persona, setting and scen
     "hook": "She sits beside you every day, but you've never seen her face.",
     "openingMessage": "finally tumne mujhe notice kia.",
     "status": "Online",
-    "backgroundClass": "bg-seat27"
+    "backgroundClass": "bg-seat27",
+    "createdOn": "2026-11-25",
+    "newToday": false
   }
 ]
 ```
+
+`createdOn` is the date the persona was generated. `newToday` is true only for the
+persona generated today in the configured daily zone; the frontend marks that card
+with a **NEW TODAY** badge and shows it first in its section.
 
 ### `POST /stories/daily`
 
@@ -174,7 +180,12 @@ Every day at **11:00 PM IST** `DailyStoryJob` runs:
 3. `AvatarService` generates a portrait and stores it in `data/images/`. If image generation fails, it writes an SVG portrait instead.
 4. The story is saved to `data/stories.json` and appears on the site immediately.
 
-If the app was closed at 11 PM, the next start after 11 PM catches up and generates that day's story. Change the schedule with `VEYRA_DAILY_CRON` and `VEYRA_DAILY_ZONE`.
+If the app was closed at 11 PM, the next start catches up on the **missed days**, not
+just the latest one — up to three personas are backfilled, each stamped with its own
+date. A fresh install does not backfill history: it only adds today when 11 PM has
+already passed. If a generation fails (bad key or rate limit), catch-up stops instead
+of retrying every remaining day. Change the schedule with `VEYRA_DAILY_CRON` and
+`VEYRA_DAILY_ZONE`.
 
 ---
 
