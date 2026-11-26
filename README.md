@@ -13,6 +13,7 @@ It is a single Spring Boot app: the Java backend serves the frontend, exposes th
 - 💬 AI-powered roleplay chat with per-story characters
 - 🎭 18 story worlds, each with its own persona, setting and scenario
 - 🗂️ Sections: **Top 5**, **Romance**, **Mystery**, **Drama**, **Thriller**, **Late Night** — every story belongs to exactly one section
+- 📄 Hash-routed pages (Home / Stories / Create / About) with genre tabs inside Stories, instead of one long scroll page
 - 🌙 One brand-new persona, with its own generated portrait, added automatically every day at 11 PM IST
 - 🌐 English, Hindi & Hinglish replies (language selector in the chat header)
 - 😊 Emoji picker

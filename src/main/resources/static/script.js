@@ -19,54 +19,11 @@ const API_BASE =
 const exploreBtn =
     document.getElementById("exploreBtn");
 
-const storiesSection =
-    document.getElementById("stories");
-
-if (exploreBtn && storiesSection) {
+if (exploreBtn) {
 
     exploreBtn.addEventListener("click", () => {
 
-        const startPosition =
-            window.scrollY;
-
-        const targetPosition =
-            storiesSection.getBoundingClientRect().top +
-            window.scrollY;
-
-        const distance =
-            targetPosition - startPosition;
-
-        const duration = 1200;
-
-        let startTime = null;
-
-        function animation(currentTime) {
-
-            if (startTime === null) {
-                startTime = currentTime;
-            }
-
-            const elapsed =
-                currentTime - startTime;
-
-            const progress =
-                Math.min(elapsed / duration, 1);
-
-            const ease =
-                1 - Math.pow(1 - progress, 3);
-
-            window.scrollTo(
-                0,
-                startPosition + distance * ease
-            );
-
-            if (progress < 1) {
-                requestAnimationFrame(animation);
-            }
-
-        }
-
-        requestAnimationFrame(animation);
+        window.location.hash = "#stories";
 
     });
 
@@ -83,9 +40,7 @@ if (createStoryBtn) {
 
     createStoryBtn.addEventListener("click", () => {
 
-        alert(
-            "Your story creation journey starts here!"
-        );
+        window.location.hash = "#create";
 
     });
 
@@ -538,6 +493,8 @@ async function loadStories() {
 
         renderStorySections(stories, container);
 
+        applyRoute();
+
     } catch (error) {
 
         console.error(
@@ -576,6 +533,7 @@ function renderStorySections(stories, container) {
             document.createElement("section");
 
         block.className = "story-section";
+        block.dataset.section = title;
 
         const heading =
             document.createElement("h2");
@@ -1479,6 +1437,131 @@ if (emojiBtn && messageInput) {
     );
 
 }
+
+/* =====================================================
+   PAGE ROUTING
+   Home / Stories / About / Create + genre tabs
+   ===================================================== */
+
+const pageViews =
+    Array.from(document.querySelectorAll(".page-view"));
+
+const navLinks =
+    Array.from(document.querySelectorAll("nav a[data-nav]"));
+
+const sectionTabs =
+    document.getElementById("sectionTabs");
+
+function currentRoute() {
+
+    const hash =
+        decodeURIComponent(
+            window.location.hash.replace(/^#/, "")
+        );
+
+    const parts =
+        hash.split("/").filter(Boolean);
+
+    return {
+        page: parts[0] || "home",
+        section: parts[1] || ""
+    };
+
+}
+
+function buildSectionTabs() {
+
+    if (!sectionTabs) {
+        return;
+    }
+
+    ["All"].concat(SECTION_ORDER).forEach(name => {
+
+        const button =
+            document.createElement("button");
+
+        button.type = "button";
+        button.textContent = name;
+        button.dataset.section = name;
+
+        button.addEventListener("click", () => {
+
+            window.location.hash =
+                name === "All"
+                    ? "#stories"
+                    : `#stories/${encodeURIComponent(name)}`;
+
+        });
+
+        sectionTabs.appendChild(button);
+
+    });
+
+}
+
+function applyRoute() {
+
+    const route =
+        currentRoute();
+
+    const page =
+        pageViews.some(view => view.dataset.page === route.page)
+            ? route.page
+            : "home";
+
+    pageViews.forEach(view => {
+        view.classList.toggle(
+            "active",
+            view.dataset.page === page
+        );
+    });
+
+    navLinks.forEach(link => {
+        link.classList.toggle(
+            "active",
+            link.dataset.nav === page
+        );
+    });
+
+    if (chatScreen) {
+        chatScreen.style.display = "none";
+    }
+
+    if (page === "stories") {
+
+        const selected =
+            route.section &&
+            SECTION_ORDER.includes(route.section)
+                ? route.section
+                : "All";
+
+        if (sectionTabs) {
+            Array.from(sectionTabs.children).forEach(button => {
+                button.classList.toggle(
+                    "active",
+                    button.dataset.section === selected
+                );
+            });
+        }
+
+        document
+            .querySelectorAll(".story-section")
+            .forEach(block => {
+                block.style.display =
+                    selected === "All" ||
+                    block.dataset.section === selected
+                        ? ""
+                        : "none";
+            });
+
+    }
+
+}
+
+window.addEventListener("hashchange", applyRoute);
+
+buildSectionTabs();
+applyRoute();
 
 /* =====================================================
    INIT

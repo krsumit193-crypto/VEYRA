@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientResponseException;
 
 import tools.jackson.databind.json.JsonMapper;
 
@@ -190,16 +192,44 @@ public class DailyStoryService {
                         : ""
         );
 
-        Map<String, Object> body = Map.of(
-                "model", model,
-                "messages", List.of(
-                        Map.of("role", "user", "content", prompt)
-                ),
-                "max_tokens", 900,
-                "temperature", 0.95,
-                // Avoid reasoning-only models that return no usable content.
-                "reasoning", Map.of("effort", "none")
-        );
+        /*
+         * Free models differ on reasoning: some only produce content when it is
+         * disabled, others reject that setting. Retry with the model's required
+         * mode and a larger budget if the first attempt yields no content.
+         */
+        String content;
+
+        try {
+            content = callStoryCompletion(prompt, 900, true);
+
+        } catch (RestClientResponseException e) {
+            if (!reasoningNotAllowed(e)) {
+                throw e;
+            }
+            content = callStoryCompletion(prompt, 900, false);
+        }
+
+        if (isBlank(content)) {
+            content = callStoryCompletion(prompt, 1800, false);
+        }
+
+        return content;
+    }
+
+    private String callStoryCompletion(String prompt, int maxTokens,
+                                       boolean disableReasoning) {
+
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("model", model);
+        body.put("messages", List.of(
+                Map.of("role", "user", "content", prompt)
+        ));
+        body.put("max_tokens", maxTokens);
+        body.put("temperature", 0.95);
+
+        if (disableReasoning) {
+            body.put("reasoning", Map.of("effort", "none"));
+        }
 
         String responseBody = restClient
                 .post()
@@ -223,6 +253,15 @@ public class DailyStoryService {
                 .path("message")
                 .path("content")
                 .asText("");
+    }
+
+    private static boolean reasoningNotAllowed(RestClientResponseException e) {
+
+        String body = e.getResponseBodyAsString();
+
+        return e.getStatusCode().value() == 400
+                && body != null
+                && body.toLowerCase(Locale.ROOT).contains("reasoning");
     }
 
     Story parseStory(String raw) {

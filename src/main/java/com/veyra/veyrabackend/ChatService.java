@@ -2,7 +2,9 @@ package com.veyra.veyrabackend;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +22,8 @@ public class ChatService {
 
     private static final int MAX_HISTORY_MESSAGES = 20;
     private static final int MAX_TOKENS = 400;
+    /** Second attempt when a reasoning model used up the first token budget. */
+    private static final int MAX_RETRY_TOKENS = 1200;
     private static final double TEMPERATURE = 0.85;
 
     private final RestClient restClient;
@@ -477,57 +481,31 @@ STRICT NATURAL CONVERSATION RULES:
         );
 
         /*
-         * "openrouter/free" sometimes picks a reasoning model that spends the
-         * whole token budget thinking and returns an empty content field.
-         * Asking for no reasoning keeps the reply in the normal content field.
+         * "openrouter/free" routes to models with different reasoning rules.
+         * Some ignore content unless reasoning is off; others require it. Try
+         * without reasoning first, then honour the model's requirement and give
+         * it a larger budget so thinking does not eat the whole reply.
          */
-        Map<String, Object> requestBody = Map.of(
-                "model", model,
-                "messages", messages,
-                "max_tokens", MAX_TOKENS,
-                "temperature", TEMPERATURE,
-                "reasoning", Map.of("effort", "none")
-        );
-
         try {
 
-            String responseBody = restClient
-                    .post()
-                    .uri("/chat/completions")
-                    .header(
-                            "Authorization",
-                            "Bearer " + apiKey
-                    )
-                    .header(
-                            "Content-Type",
-                            "application/json"
-                    )
-                    .body(requestBody)
-                    .retrieve()
-                    .body(String.class);
+            String aiContent;
 
-            if (responseBody == null || responseBody.isBlank()) {
+            try {
+                aiContent = callOpenRouter(messages, MAX_TOKENS, true);
 
-                throw new RuntimeException(
-                        "OpenRouter returned an empty response."
-                );
+            } catch (RestClientResponseException e) {
+                if (!reasoningNotAllowed(e)) {
+                    throw e;
+                }
+                aiContent = callOpenRouter(messages, MAX_TOKENS, false);
             }
 
-            JsonNode responseJson =
-                    jsonMapper.readTree(responseBody);
+            if (isBlank(aiContent)) {
+                aiContent = callOpenRouter(messages, MAX_RETRY_TOKENS, false);
+            }
 
-            String aiContent = responseJson
-                    .path("choices")
-                    .path(0)
-                    .path("message")
-                    .path("content")
-                    .asText("");
-
-            if (aiContent.isBlank()) {
-
-                throw new RuntimeException(
-                        "AI response content is empty."
-                );
+            if (isBlank(aiContent)) {
+                throw new RuntimeException("AI response content is empty.");
             }
 
             return parseAIResponse(aiContent);
@@ -557,6 +535,57 @@ STRICT NATURAL CONVERSATION RULES:
                     e
             );
         }
+    }
+
+    /** One OpenRouter call. Returns the assistant's content, possibly blank. */
+    private String callOpenRouter(List<Map<String, String>> messages,
+                                  int maxTokens,
+                                  boolean disableReasoning) {
+
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("model", model);
+        body.put("messages", messages);
+        body.put("max_tokens", maxTokens);
+        body.put("temperature", TEMPERATURE);
+
+        if (disableReasoning) {
+            body.put("reasoning", Map.of("effort", "none"));
+        }
+
+        String responseBody = restClient
+                .post()
+                .uri("/chat/completions")
+                .header("Authorization", "Bearer " + apiKey)
+                .header("Content-Type", "application/json")
+                .body(body)
+                .retrieve()
+                .body(String.class);
+
+        if (responseBody == null || responseBody.isBlank()) {
+            throw new RuntimeException("OpenRouter returned an empty response.");
+        }
+
+        JsonNode json = jsonMapper.readTree(responseBody);
+
+        return json
+                .path("choices")
+                .path(0)
+                .path("message")
+                .path("content")
+                .asText("");
+    }
+
+    private static boolean reasoningNotAllowed(RestClientResponseException e) {
+
+        String body = e.getResponseBodyAsString();
+
+        return e.getStatusCode().value() == 400
+                && body != null
+                && body.toLowerCase(Locale.ROOT).contains("reasoning");
+    }
+
+    private static boolean isBlank(String value) {
+        return value == null || value.isBlank();
     }
 
     private String buildStoryBlock(Story story) {
@@ -620,6 +649,38 @@ STRICT NATURAL CONVERSATION RULES:
                 """.formatted(instruction);
     }
 
+    /**
+     * Free models occasionally return plain text instead of the requested JSON.
+     * Pull a leading narration sentence into the action field so the chat UI
+     * does not display it as the character's spoken words.
+     */
+    private static String[] splitPlainTextReply(String text) {
+
+        String normalized = text.replace("\r\n", "\n").trim();
+
+        int breakIndex = normalized.indexOf("\n\n");
+
+        if (breakIndex < 0) {
+            breakIndex = normalized.indexOf('\n');
+        }
+
+        if (breakIndex > 0) {
+            String firstLine = normalized.substring(0, breakIndex).trim();
+
+            if (firstLine.length() <= 200
+                    && firstLine.matches("(?i)^(she|he|they|the|a|an)\\b.*[.!?]$")) {
+
+                String dialogue = normalized.substring(breakIndex).trim();
+
+                if (!dialogue.isBlank()) {
+                    return new String[]{firstLine, dialogue};
+                }
+            }
+        }
+
+        return new String[]{"", normalized};
+    }
+
     ChatResponse parseAIResponse(String aiContent) {
     ChatResponse result = new ChatResponse();
 
@@ -640,8 +701,14 @@ STRICT NATURAL CONVERSATION RULES:
 
     } catch (Exception e) {
         System.err.println("VEYRA JSON parse error: " + e.getMessage());
-        result.setAction("");
-        result.setReply(aiContent);
+        /*
+         * Free models sometimes ignore the JSON instruction. Keep the reply
+         * usable: if they sent a narration line followed by dialogue, show the
+         * narration as the action instead of mixing it into the spoken text.
+         */
+        String[] plain = splitPlainTextReply(aiContent);
+        result.setAction(plain[0]);
+        result.setReply(plain[1]);
     }
 
     String action = result.getAction() == null ? "" : result.getAction().trim();

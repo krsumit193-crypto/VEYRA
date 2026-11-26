@@ -81,6 +81,62 @@ main {
 }
 
 /* =====================================================
+   PAGE ROUTING (hash based)
+   ===================================================== */
+
+.page-view {
+    display: none;
+}
+
+.page-view.active {
+    display: block;
+}
+
+nav a.active {
+    color: #ef9cf3;
+}
+
+/* Genre tabs inside the Stories page */
+
+.section-tabs {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 0 0 12px;
+}
+
+.section-tabs button {
+    padding: 9px 16px;
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+
+    background: rgba(255, 255, 255, 0.04);
+    color: #c7c7d1;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.section-tabs button:hover {
+    border-color: rgba(239, 156, 243, 0.5);
+    color: #ffffff;
+}
+
+.section-tabs button.active {
+    border-color: #ef9cf3;
+    background: #ef9cf3;
+    color: #111118;
+}
+
+/* =====================================================
    HERO
    ===================================================== */
 
