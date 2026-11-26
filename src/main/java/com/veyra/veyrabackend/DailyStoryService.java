@@ -196,7 +196,9 @@ public class DailyStoryService {
                         Map.of("role", "user", "content", prompt)
                 ),
                 "max_tokens", 900,
-                "temperature", 0.95
+                "temperature", 0.95,
+                // Avoid reasoning-only models that return no usable content.
+                "reasoning", Map.of("effort", "none")
         );
 
         String responseBody = restClient

@@ -102,7 +102,10 @@ The frontend is served by Spring Boot, so there is nothing else to start.
 | `veyra.data.dir` | `VEYRA_DATA_DIR` | `data` |
 | `veyra.admin.token` | `VEYRA_ADMIN_TOKEN` | empty (manual trigger disabled) |
 
-`openrouter/free` is rate-limited. If replies fail often, set `OPENROUTER_MODEL` to a paid/less busy model.
+`openrouter/free` is rate-limited. It also sometimes picks a reasoning-only model that
+spends the whole token budget thinking and returns an empty `content` field. VEYRA sends
+`reasoning: {"effort":"none"}` with every chat and story-generation request to avoid that;
+if replies still fail often, set `OPENROUTER_MODEL` to a paid/less busy model.
 
 Image generation needs a model that returns images (the default does). If it fails, VEYRA writes a local SVG portrait instead, so a story is never left without a picture.
 

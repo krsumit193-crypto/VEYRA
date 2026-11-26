@@ -19,7 +19,7 @@ import tools.jackson.databind.json.JsonMapper;
 public class ChatService {
 
     private static final int MAX_HISTORY_MESSAGES = 20;
-    private static final int MAX_TOKENS = 220;
+    private static final int MAX_TOKENS = 400;
     private static final double TEMPERATURE = 0.85;
 
     private final RestClient restClient;
@@ -476,11 +476,17 @@ STRICT NATURAL CONVERSATION RULES:
                 )
         );
 
+        /*
+         * "openrouter/free" sometimes picks a reasoning model that spends the
+         * whole token budget thinking and returns an empty content field.
+         * Asking for no reasoning keeps the reply in the normal content field.
+         */
         Map<String, Object> requestBody = Map.of(
                 "model", model,
                 "messages", messages,
                 "max_tokens", MAX_TOKENS,
-                "temperature", TEMPERATURE
+                "temperature", TEMPERATURE,
+                "reasoning", Map.of("effort", "none")
         );
 
         try {
