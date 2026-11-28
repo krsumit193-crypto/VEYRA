@@ -6,6 +6,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -25,6 +27,16 @@ public class ChatService {
     /** Second attempt when a reasoning model used up the first token budget. */
     private static final int MAX_RETRY_TOKENS = 1200;
     private static final double TEMPERATURE = 0.85;
+
+    /** Field labels a model may emit instead of the requested JSON. */
+    private static final Pattern LABELED_ACTION_REPLY = Pattern.compile(
+            "^action\\s*:\\s*(.*?)\\s*\\n+\\s*reply\\s*:\\s*(.+)$",
+            Pattern.CASE_INSENSITIVE | Pattern.DOTALL
+    );
+    private static final Pattern LABELED_REPLY = Pattern.compile(
+            "^reply\\s*:\\s*(.+)$",
+            Pattern.CASE_INSENSITIVE | Pattern.DOTALL
+    );
 
     private final RestClient restClient;
     private final JsonMapper jsonMapper;
@@ -658,6 +670,16 @@ STRICT NATURAL CONVERSATION RULES:
 
         String normalized = text.replace("\r\n", "\n").trim();
 
+        /*
+         * Some models skip the JSON but still label the two fields. Without
+         * this the labels ("action:", "reply:") show up in the chat bubble.
+         */
+        String[] labeled = splitLabeledReply(normalized);
+
+        if (labeled != null) {
+            return labeled;
+        }
+
         int breakIndex = normalized.indexOf("\n\n");
 
         if (breakIndex < 0) {
@@ -679,6 +701,31 @@ STRICT NATURAL CONVERSATION RULES:
         }
 
         return new String[]{"", normalized};
+    }
+
+    /**
+     * Reads a reply written as labelled plain lines, e.g.
+     * {@code action: She smiles.\nreply: "Haan."}. Returns {@code null} when
+     * the text does not use those labels.
+     */
+    private static String[] splitLabeledReply(String text) {
+
+        Matcher actionFirst = LABELED_ACTION_REPLY.matcher(text);
+
+        if (actionFirst.matches()) {
+            return new String[]{
+                    actionFirst.group(1).trim(),
+                    actionFirst.group(2).trim()
+            };
+        }
+
+        Matcher replyOnly = LABELED_REPLY.matcher(text);
+
+        if (replyOnly.matches()) {
+            return new String[]{"", replyOnly.group(1).trim()};
+        }
+
+        return null;
     }
 
     ChatResponse parseAIResponse(String aiContent) {
@@ -715,12 +762,12 @@ STRICT NATURAL CONVERSATION RULES:
     String reply = result.getReply() == null ? "" : result.getReply().trim();
 
     // Extract action prefix from reply, even if followed by a quote.
-    java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(
+    Pattern pattern = Pattern.compile(
             "^\\s*\\[Character action:\\s*(.*?)]\\s*[\"']?\\s*",
-            java.util.regex.Pattern.CASE_INSENSITIVE | java.util.regex.Pattern.DOTALL
+            Pattern.CASE_INSENSITIVE | Pattern.DOTALL
     );
 
-    java.util.regex.Matcher matcher = pattern.matcher(reply);
+    Matcher matcher = pattern.matcher(reply);
 
     if (matcher.find()) {
         String extractedAction = matcher.group(1).trim();

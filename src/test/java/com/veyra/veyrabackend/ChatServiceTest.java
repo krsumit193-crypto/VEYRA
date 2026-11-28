@@ -94,4 +94,22 @@ class ChatServiceTest {
         assertEquals("", response.getAction());
         assertEquals("not json at all", response.getReply());
     }
+
+    @Test
+    void splitsLabeledPlainTextReply() {
+        ChatResponse response = service.parseAIResponse(
+                "action: She raises an eyebrow.\nreply: \"Huh? Ab toh pata chala.\""
+        );
+
+        assertEquals("She raises an eyebrow.", response.getAction());
+        assertEquals("Huh? Ab toh pata chala.", response.getReply());
+    }
+
+    @Test
+    void splitsLabeledPlainTextReplyWithoutAction() {
+        ChatResponse response = service.parseAIResponse("reply: \"Haan.\"");
+
+        assertEquals("", response.getAction());
+        assertEquals("Haan.", response.getReply());
+    }
 }
