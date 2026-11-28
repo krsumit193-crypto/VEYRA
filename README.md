@@ -1,5 +1,7 @@
 # VEYRA 💗
 
+[![CI](https://github.com/krsumit193-crypto/VEYRA/actions/workflows/ci.yml/badge.svg)](https://github.com/krsumit193-crypto/VEYRA/actions/workflows/ci.yml)
+
 > Meet someone who remembers.
 
 VEYRA is an AI story-chat app. Pick a world, step into the scene, and talk to a character who remembers what you said.
@@ -88,6 +90,8 @@ The frontend is served by Spring Boot, so there is nothing else to start.
 ```bash
 ./mvnw test
 ```
+
+Every push and pull request runs the same suite in CI (`.github/workflows/ci.yml`).
 
 ---
 
